@@ -1,5 +1,3 @@
-//import Image from "next/image";
-//import Link from "next/link";
 import Link from "next/link";
 import { pieces } from "@/lib/pieces";
 import { palette } from "@/lib/palette";
@@ -16,26 +14,15 @@ export default function HomePage() {
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      {/* Hero — full-bleed spotlit piece, text overlaid */}
+      {/* Hero — full-bleed spotlit piece, text overlaid, auto-rotating photos */}
       <Link href={`/piece/${hero.id}`}>
         <section className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
           <div className="absolute inset-0 overflow-hidden" style={{ background: palette.wall }}>
-            /*{hero.images?.[0] && (
-              <Image
-                src={hero.images[0]}
-                alt={`${hero.title} by ${hero.artist}`}
-                fill
-                priority
-                sizes="100vw"
-                style={{ objectFit: "cover" }}
-              />
-            )}*/
-              <HeroSlideshow
+            <HeroSlideshow
               images={hero.images}
               alt={`${hero.title} by ${hero.artist}`}
               intervalSeconds={5}
             />
-
             <div
               style={{
                 position: "absolute",
