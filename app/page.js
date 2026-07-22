@@ -1,4 +1,5 @@
-import Image from "next/image";
+//import Image from "next/image";
+//import Link from "next/link";
 import Link from "next/link";
 import { pieces } from "@/lib/pieces";
 import { palette } from "@/lib/palette";
@@ -6,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 import WallLabel from "@/components/WallLabel";
+import HeroSlideshow from "@/components/HeroSlideshow";
 
 export default function HomePage() {
   const hero = pieces.find((p) => p.isHero) || pieces[0];
@@ -18,7 +20,7 @@ export default function HomePage() {
       <Link href={`/piece/${hero.id}`}>
         <section className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
           <div className="absolute inset-0 overflow-hidden" style={{ background: palette.wall }}>
-            {hero.images?.[0] && (
+            /*{hero.images?.[0] && (
               <Image
                 src={hero.images[0]}
                 alt={`${hero.title} by ${hero.artist}`}
@@ -27,7 +29,13 @@ export default function HomePage() {
                 sizes="100vw"
                 style={{ objectFit: "cover" }}
               />
-            )}
+            )}*/
+              <HeroSlideshow
+              images={hero.images}
+              alt={`${hero.title} by ${hero.artist}`}
+              intervalSeconds={5}
+            />
+
             <div
               style={{
                 position: "absolute",
