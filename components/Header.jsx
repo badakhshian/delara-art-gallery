@@ -34,9 +34,13 @@ export default function Header() {
         <Link href="/#collection" style={{ color: palette.bone }}>
           Collection
         </Link>
+        //<span>Artists</span>
+       // <span>Provenance</span>
+      //  <span>Visit</span>
         <span>Artists</span>
-        <span>Provenance</span>
-        <span>Visit</span>
+        <Link href="/visit" style={{ color: palette.bone }}>
+          Visit
+        </Link>
       </nav>
 
       <a
