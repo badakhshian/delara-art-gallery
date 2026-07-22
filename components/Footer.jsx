@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { palette } from "@/lib/palette";
+import SocialLinks from "./SocialLinks";
 
 export default function Footer() {
   return (
@@ -53,6 +54,7 @@ export default function Footer() {
             Ahmadi.delara@gmail.com
           </a>
         </div>
+        <SocialLinks className="mt-3" />
       </div>
     </footer>
   );
