@@ -42,8 +42,8 @@ export default function Footer() {
           Delara Ahmadi Darani
         </div>
         <div className="normal-case mt-1">
-          <a href="tel:+15145664383" style={{ color: palette.smoke, textDecoration: "none" }}>
-            +1 514 566 4383
+          <a href="tel:+15149520150" style={{ color: palette.smoke, textDecoration: "none" }}>
+            +1 514 952 0150
           </a>
         </div>
         <div className="normal-case mt-1">
