@@ -23,7 +23,7 @@ export default function Header() {
         />
       </Link>
 
-      <nav
+           <nav
         className="hidden sm:flex gap-8 text-xs uppercase"
         style={{
           fontFamily: "'IBM Plex Mono', monospace",
@@ -31,14 +31,13 @@ export default function Header() {
           letterSpacing: "0.12em",
         }}
       >
-    <Link href="/" style={{ color: palette.bone }}>
+        <Link href="/" style={{ color: palette.bone }}>
           Home
         </Link>
         <Link href="/#collection" style={{ color: palette.bone }}>
           Collection
         </Link>
-        </Link>
-        <span>Artist</span>
+        <span>Artists</span>
         <Link href="/visit" style={{ color: palette.bone }}>
           Visit
         </Link>
