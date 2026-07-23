@@ -1,77 +1,18 @@
-import Link from "next/link";
 import { pieces } from "@/lib/pieces";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
-import WallLabel from "@/components/WallLabel";
-import HeroSlideshow from "@/components/HeroSlideshow";
+import HeroCarousel from "@/components/HeroCarousel";
 
 export default function HomePage() {
-  const hero = pieces.find((p) => p.isHero) || pieces[0];
-
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      {/* Hero — full-bleed spotlit piece, text overlaid, auto-rotating photos */}
-      <Link href={`/piece/${hero.id}`}>
-        <section className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
-          <div className="absolute inset-0 overflow-hidden" style={{ background: palette.wall }}>
-            <HeroSlideshow
-              images={hero.images}
-              alt={`${hero.title} by ${hero.artist}`}
-              intervalSeconds={5}
-            />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "radial-gradient(ellipse at 50% 38%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%)",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(180deg, rgba(14,13,12,0.05) 0%, rgba(14,13,12,0) 35%, rgba(14,13,12,0.15) 60%, rgba(14,13,12,0.9) 100%)",
-              }}
-            />
-          </div>
-
-          <div className="absolute left-0 right-0 bottom-0 px-8 sm:px-14 pb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-            <div className="max-w-xl">
-              <h1
-                style={{
-                  fontFamily: "'Fraunces', serif",
-                  color: palette.bone,
-                  fontWeight: 300,
-                  fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-                  lineHeight: 1.05,
-                }}
-              >
-                {hero.title}
-              </h1>
-              <p
-                className="mt-4 text-sm max-w-md"
-                style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
-              >
-                Original mixed-media works by Delara Ahmadi Darani — acrylic and
-                modelling paste built up into raised, textured surfaces. Available
-                directly from the studio, one piece at a time.
-              </p>
-            </div>
-            <div
-              className="px-5 py-4"
-              style={{ background: "rgba(14,13,12,0.55)", backdropFilter: "blur(4px)" }}
-            >
-              <WallLabel piece={hero} dark />
-            </div>
-          </div>
-        </section>
-      </Link>
+      {/* Hero — rotates through the whole collection: photo, title, and
+          wall label all change together every few seconds */}
+      <HeroCarousel pieces={pieces} intervalSeconds={6} />
 
       {/* Current exhibition — horizontal strip */}
       <section className="px-8 pb-4 pt-16" id="collection">
