@@ -31,8 +31,12 @@ export default function Header() {
           letterSpacing: "0.12em",
         }}
       >
+    <Link href="/" style={{ color: palette.bone }}>
+          Home
+        </Link>
         <Link href="/#collection" style={{ color: palette.bone }}>
           Collection
+        </Link>
         </Link>
         <span>Artist</span>
         <Link href="/visit" style={{ color: palette.bone }}>
