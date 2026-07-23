@@ -35,7 +35,7 @@ export default function Header() {
           Home
         </Link>
         <Link href="/#collection" style={{ color: palette.bone }}>
-          Collection
+          Collections
         </Link>
         <span>Artists</span>
         <Link href="/visit" style={{ color: palette.bone }}>
