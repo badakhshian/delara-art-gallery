@@ -74,7 +74,7 @@ export default function HomePage() {
             <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
               White glove
             </div>
-            delivery  //over $1,000
+            delivery  /*over $1,000*/
           </div>
           <div>
             <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
