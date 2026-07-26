@@ -31,7 +31,7 @@ export default function ArtistPage() {
             style={{ aspectRatio: "3 / 4", background: palette.wall }}
           >
             <Image
-              src="/images/delara-portrait.jpg"
+              src="/images/delara-portrait.jpeg"
               alt="Delara Ahmadi Darani"
               fill
               sizes="(max-width: 640px) 100vw, 280px"
