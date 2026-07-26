@@ -25,7 +25,7 @@ export default function Header() {
             src="/images/logo-gold.JPEG"
             alt="Delara Ahmadi Darani — Delara Art Gallery"
             width={220}
-            height={88}
+            height={50}
             style={{ height: 100, width: "auto" }}
             priority
           />
