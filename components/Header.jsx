@@ -22,7 +22,7 @@ export default function Header() {
       <div className="flex items-center justify-between px-8 py-6">
         <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
           <Image
-            src="/images/logo-gold.png"
+            src="/images/logo-gold.JPEG"
             alt="Delara Ahmadi Darani — Delara Art Gallery"
             width={220}
             height={88}
