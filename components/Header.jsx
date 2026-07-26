@@ -20,17 +20,17 @@ export default function Header() {
       }}
     >
       <div className="flex items-center justify-between px-8 py-6">
-        <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+                <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
           <Image
-                      <Image
             src="/images/logo-gold.png"
             alt="Delara Ahmadi Darani — Delara Art Gallery"
             width={270}
             height={152}
             style={{ height: 44, width: "auto" }}
             priority
-          />            
+          />
         </Link>
+
 
         <nav
           className="hidden sm:flex gap-8 text-xs uppercase"
