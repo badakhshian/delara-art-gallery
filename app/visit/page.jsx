@@ -29,31 +29,67 @@ export default function VisitPage() {
   const [pieceId, setPieceId] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setStatus("sending");
+    setErrorMessage("");
 
-    const piece = pieces.find((p) => p.id === pieceId);
-    const pieceLine = piece ? piece.title : "No specific piece — general visit";
+    try {
+      const res = await fetch("/api/visit-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, pieceId, preferredTime, message }),
+      });
+      const data = await res.json();
 
-    const subject = `Viewing request${piece ? `: ${piece.title}` : ""}`;
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      phone ? `Phone: ${phone}` : null,
-      `Piece: ${pieceLine}`,
-      preferredTime ? `Preferred time: ${preferredTime}` : null,
-      "",
-      message,
-    ]
-      .filter(Boolean)
-      .join("\n");
+      if (!res.ok) {
+        setStatus("error");
+        setErrorMessage(data.error || "Something went wrong. Please try again.");
+        return;
+      }
 
-    const mailto = `mailto:Ahmadi.delara@gmail.com?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
+      setStatus("sent");
+    } catch (err) {
+      setStatus("error");
+      setErrorMessage("Something went wrong. Please try again.");
+    }
+  }
 
-    window.location.href = mailto;
+  if (status === "sent") {
+    return (
+      <div style={{ background: palette.void, minHeight: "100vh" }}>
+        <Header />
+        <div className="px-6 sm:px-14 py-24 max-w-2xl mx-auto text-center">
+          <div
+            className="text-xs uppercase mb-3"
+            style={{ ...labelStyle, color: palette.brass }}
+          >
+            Visit
+          </div>
+          <h1
+            style={{
+              fontFamily: "'Fraunces', serif",
+              color: palette.bone,
+              fontWeight: 300,
+              fontSize: "2rem",
+            }}
+          >
+            Request sent
+          </h1>
+          <p
+            className="mt-4 text-sm leading-relaxed"
+            style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
+          >
+            Thank you — your viewing request has been sent. You'll hear back
+            directly to confirm a time.
+          </p>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -81,8 +117,8 @@ export default function VisitPage() {
           className="mt-4 text-sm leading-relaxed"
           style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
         >
-          Viewings are by appointment. Fill in a few details below — this
-          opens a pre-filled email you can send directly, no account needed.
+          Viewings are by appointment. Fill in a few details below and the
+          request is sent directly — no email app needed.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-6">
@@ -169,6 +205,7 @@ export default function VisitPage() {
 
           <button
             type="submit"
+            disabled={status === "sending"}
             className="text-xs uppercase px-5 py-3 self-start mt-2"
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
@@ -176,11 +213,21 @@ export default function VisitPage() {
               background: palette.brass,
               letterSpacing: "0.1em",
               border: "none",
-              cursor: "pointer",
+              cursor: status === "sending" ? "wait" : "pointer",
+              opacity: status === "sending" ? 0.7 : 1,
             }}
           >
-            Send request
+            {status === "sending" ? "Sending…" : "Send request"}
           </button>
+
+          {status === "error" && (
+            <p
+              className="text-xs"
+              style={{ color: palette.oxblood, fontFamily: "'Inter', sans-serif" }}
+            >
+              {errorMessage}
+            </p>
+          )}
         </form>
       </div>
 
