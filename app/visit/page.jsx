@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { pieces } from "@/lib/pieces";
+import { useState, useEffect } from "react";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -31,6 +30,14 @@ export default function VisitPage() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [pieces, setPieces] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/pieces")
+      .then((res) => res.json())
+      .then((data) => setPieces(data.pieces || []))
+      .catch(() => setPieces([]));
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
