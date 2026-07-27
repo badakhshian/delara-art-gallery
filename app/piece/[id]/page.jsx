@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { pieces, getPiece, formatPrice } from "@/lib/pieces";
+import { formatPrice } from "@/lib/pieces";
+import { getPiece } from "@/lib/piecesStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,12 +9,8 @@ import DetailGallery from "@/components/DetailGallery";
 import BuyButton from "@/components/BuyButton";
 import PieceQRCode from "@/components/PieceQRCode";
 
-export function generateStaticParams() {
-  return pieces.map((p) => ({ id: p.id }));
-}
-
-export function generateMetadata({ params }) {
-  const piece = getPiece(params.id);
+export async function generateMetadata({ params }) {
+  const piece = await getPiece(params.id);
   if (!piece) return {};
   return {
     title: `${piece.title} — Delara Art Gallery`,
@@ -21,8 +18,10 @@ export function generateMetadata({ params }) {
   };
 }
 
-export default function PieceDetailPage({ params }) {
-  const piece = getPiece(params.id);
+export const dynamic = "force-dynamic";
+
+export default async function PieceDetailPage({ params }) {
+  const piece = await getPiece(params.id);
   if (!piece) notFound();
 
   return (
@@ -46,7 +45,6 @@ export default function PieceDetailPage({ params }) {
         <div className="grid sm:grid-cols-2 gap-10">
           <DetailGallery piece={piece} />
 
-          {/* Info column */}
           <div className="flex flex-col">
             <h1
               style={{
