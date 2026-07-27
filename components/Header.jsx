@@ -19,7 +19,7 @@ export default function Header() {
         borderBottom: `1px solid rgba(184,141,87,0.15)`,
       }}
     >
-      <div className="flex items-center justify-between px-8 py-6">
+      <div className="flex items-center justify-between px-8 py-3">
                 <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
           <Image
             src="/images/logo-gold.png"
