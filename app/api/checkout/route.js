@@ -1,49 +1,71 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { getPiece } from "@/lib/piecesStore";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-06-20",
 });
 
-// IMPORTANT — read before going live:
-// `lib/pieces.js` is a static file, so this route can't actually persist a
-// "sold" change while the app is deployed (editing a file on a running
-// server doesn't stick, and multiple visitors won't see the same state).
-//
-// Before launch, move `pieces` into a real database — Supabase's free tier
-// is a good fit — and replace the TODO below with a query that sets
-// sold = true for the piece in `metadata.pieceId`. That's what makes it safe
-// to sell one-of-a-kind pieces without double-selling one.
-//
-// To wire this up in Stripe: Dashboard → Developers → Webhooks → Add
-// endpoint → https://artedelara.com/api/webhook, listening for
-// checkout.session.completed. Copy the signing secret into
-// STRIPE_WEBHOOK_SECRET in your environment.
-
 export async function POST(request) {
-  const body = await request.text();
-  const signature = request.headers.get("stripe-signature");
-
-  let event;
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
+    const { pieceId } = await request.json();
+    const piece = await getPiece(pieceId);
+
+    if (!piece) {
+      return NextResponse.json({ error: "Piece not found." }, { status: 404 });
+    }
+    if (piece.sold) {
+      return NextResponse.json({ error: "This piece has already sold." }, { status: 409 });
+    }
+    if (piece.priceCents == null) {
+      return NextResponse.json(
+        { error: "This piece doesn't have a price set yet." },
+        { status: 400 }
+      );
+    }
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: "Stripe isn't configured yet. Add STRIPE_SECRET_KEY to your environment." },
+        { status: 500 }
+      );
+    }
+
+    const origin = request.headers.get("origin") || "https://artedelara.com";
+    const image = piece.images?.[0];
+    const absoluteImage = image
+      ? image.startsWith("http")
+        ? image
+        : `${origin}${image}`
+      : null;
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            unit_amount: piece.priceCents,
+            product_data: {
+              name: piece.title,
+              description: `${piece.medium} · ${piece.dims}`,
+              images: absoluteImage ? [absoluteImage] : [],
+              metadata: { pieceId: piece.id },
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA"],
+      },
+      metadata: { pieceId: piece.id },
+      success_url: `${origin}/piece/${piece.id}?purchase=success`,
+      cancel_url: `${origin}/piece/${piece.id}?purchase=cancelled`,
+    });
+
+    return NextResponse.json({ url: session.url });
   } catch (err) {
-    console.error("Webhook signature verification failed:", err.message);
-    return NextResponse.json({ error: "Invalid signature." }, { status: 400 });
+    console.error("Checkout error:", err);
+    return NextResponse.json({ error: "Could not start checkout." }, { status: 500 });
   }
-
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const pieceId = session.metadata?.pieceId;
-
-    // TODO: replace with a real database update, e.g.:
-    // await supabase.from("pieces").update({ sold: true }).eq("id", pieceId);
-    console.log(`Piece sold (mark this in your database): ${pieceId}`);
-  }
-
-  return NextResponse.json({ received: true });
 }
