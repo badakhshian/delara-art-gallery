@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { pieces } from "@/lib/pieces";
+import { getPieces } from "@/lib/piecesStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 import HeroCarousel from "@/components/HeroCarousel";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const pieces = await getPieces();
+
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
