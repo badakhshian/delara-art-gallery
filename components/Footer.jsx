@@ -12,7 +12,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-3">
             <Image
-              src="/images/logo-mono.png"
+              src="/images/logo-gold.png"
               alt="Delara Ahmadi Darani monogram"
               width={140}
               height={75}
