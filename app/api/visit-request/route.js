@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { getPiece } from "@/lib/pieces";
+import { getPiece } from "@/lib/piecesStore";
+
 
 export async function POST(request) {
   try {
@@ -19,8 +20,8 @@ export async function POST(request) {
         { status: 500 }
       );
     }
+    const piece = pieceId ? await getPiece(pieceId) : null;
 
-    const piece = pieceId ? getPiece(pieceId) : null;
     const pieceLine = piece ? piece.title : "No specific piece — general visit";
 
     const resend = new Resend(process.env.RESEND_API_KEY);
