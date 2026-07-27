@@ -91,7 +91,21 @@ export default async function AdminPage() {
                 {p.sold ? " · sold" : ""}
               </div>
             </div>
+           <Link
+              href={`/admin/edit/${p.id}`}
+              className="text-xs uppercase px-3 py-2"
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                color: palette.bone,
+                border: `1px solid rgba(184,141,87,0.4)`,
+                letterSpacing: "0.1em",
+                textDecoration: "none",
+              }}
+            >
+              Edit
+            </Link>
             <DeletePieceButton pieceId={p.id} pieceTitle={p.title} />
+
           </div>
         ))}
         {pieces.length === 0 && (
