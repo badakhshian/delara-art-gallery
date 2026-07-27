@@ -52,7 +52,7 @@ export default function CollectionPage({ params }) {
             No pieces in this collection yet.
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">
             {collectionPieces.map((p, i) => (
               <div key={p.id} className={i === 0 ? "sm:col-span-2" : ""}>
                 <ArtworkCard piece={p} tall={i === 0} />
