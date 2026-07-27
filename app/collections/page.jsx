@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { pieces } from "@/lib/pieces";
+import { getPieces } from "@/lib/piecesStore";
 import { sortedCollections } from "@/lib/collections";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
@@ -10,8 +10,11 @@ export const metadata = {
   title: "Collections — Delara Art Gallery",
 };
 
-export default function CollectionsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CollectionsPage() {
   const orderedCollections = sortedCollections();
+  const pieces = await getPieces();
 
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
