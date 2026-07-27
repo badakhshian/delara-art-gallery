@@ -43,7 +43,7 @@ export default function Header() {
           <Link href="/" style={navLinkStyle}>
             Home
           </Link>
-          <Link href="/#collection" style={navLinkStyle}>
+          <Link href="/collections" style={navLinkStyle}>
             Collection
           </Link>
           <Link href="/artist" style={navLinkStyle}>
@@ -95,7 +95,7 @@ export default function Header() {
           <Link href="/" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
             Home
           </Link>
-          <Link href="/#collection" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
+          <Link href="/collections" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
             Collection
           </Link>
           <Link href="/artist" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
