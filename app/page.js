@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { pieces } from "@/lib/pieces";
-import { sortedCollections } from "@/lib/collections";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,17 +7,12 @@ import ArtworkCard from "@/components/ArtworkCard";
 import HeroCarousel from "@/components/HeroCarousel";
 
 export default function HomePage() {
-  const orderedCollections = sortedCollections();
-
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      {/* Hero — rotates through the whole collection: photo, title, and
-          wall label all change together every few seconds */}
       <HeroCarousel pieces={pieces} intervalSeconds={6} />
 
-      {/* Current exhibition — horizontal strip */}
       <section className="px-8 pb-4 pt-16" id="collection">
         <div
           className="flex items-baseline justify-between mb-6"
@@ -44,7 +38,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Statement strip */}
       <section
         className="px-8 py-16 flex flex-col sm:flex-row gap-10 items-start sm:items-center justify-between"
         style={{
@@ -72,12 +65,6 @@ export default function HomePage() {
           </div>
           <div>
             <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
-              White glove
-            </div>
-            delivery  
-          </div>
-          <div>
-            <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
               1 of 1
             </div>
             no editions, no prints
@@ -85,48 +72,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* One section per collection, most recent collection date first.
-          Each shows up to its first 4 pieces, with a link through to the
-          full collection page. */}
-      {orderedCollections.map((collection) => {
-        const collectionPieces = pieces
-          .filter((p) => p.collection === collection.slug)
-          .slice(0, 4);
-
-        if (collectionPieces.length === 0) return null;
-
-        return (
-          <section key={collection.slug} className="px-8 py-16">
-            <div className="flex items-baseline justify-between mb-8">
-              <h2
-                style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 500 }}
-                className="text-xl"
-              >
-                {collection.name}
-              </h2>
-              <Link
-                href={`/collections/${collection.slug}`}
-                className="text-xs uppercase"
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  color: palette.brass,
-                  letterSpacing: "0.1em",
-                  textDecoration: "none",
-                }}
-              >
-                View full collection →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10">
-              {collectionPieces.map((p, i) => (
-                <div key={p.id} className={i === 0 ? "sm:col-span-2" : ""}>
-                  <ArtworkCard piece={p} tall={i === 0} />
-                </div>
-              ))}
-            </div>
-          </section>
-        );
-      })}
+      <section className="px-8 py-16 flex flex-col items-center text-center">
+        <h2
+          style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
+          className="text-2xl mb-4"
+        >
+          Explore the collections
+        </h2>
+        <p
+          className="text-sm max-w-md mb-8"
+          style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
+        >
+          Every body of work, browsed one collection at a time.
+        </p>
+        <Link
+          href="/collections"
+          className="text-xs uppercase px-6 py-3"
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            color: palette.void,
+            background: palette.brass,
+            letterSpacing: "0.1em",
+            textDecoration: "none",
+          }}
+        >
+          View collections
+        </Link>
+      </section>
 
       <Footer />
     </div>
