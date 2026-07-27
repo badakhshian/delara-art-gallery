@@ -83,7 +83,7 @@ export default function ArtistPage() {
             </div>
 
             <Link
-              href="/#collection"
+              href="/collections"
               className="inline-block mt-8 text-xs uppercase px-5 py-3"
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",
