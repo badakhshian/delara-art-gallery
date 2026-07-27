@@ -1,14 +1,10 @@
 import { notFound } from "next/navigation";
-import { pieces } from "@/lib/pieces";
-import { collections, getCollection } from "@/lib/collections";
+import { getPieces } from "@/lib/piecesStore";
+import { getCollection } from "@/lib/collections";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
-
-export function generateStaticParams() {
-  return collections.map((c) => ({ slug: c.slug }));
-}
 
 export function generateMetadata({ params }) {
   const collection = getCollection(params.slug);
@@ -16,10 +12,13 @@ export function generateMetadata({ params }) {
   return { title: `${collection.name} — Delara Art Gallery` };
 }
 
-export default function CollectionPage({ params }) {
+export const dynamic = "force-dynamic";
+
+export default async function CollectionPage({ params }) {
   const collection = getCollection(params.slug);
   if (!collection) notFound();
 
+  const pieces = await getPieces();
   const collectionPieces = pieces.filter((p) => p.collection === collection.slug);
 
   return (
