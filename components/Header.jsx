@@ -26,7 +26,7 @@ export default function Header() {
             alt="Delara Ahmadi Darani — Delara Art Gallery"
             width={270}
             height={152}
-            style={{ height: 44, width: "auto" }}
+            style={{ height: 60, width: "auto" }}
             priority
           />
         </Link>
