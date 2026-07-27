@@ -16,7 +16,7 @@ export default function Footer() {
               alt="Delara Ahmadi Darani monogram"
               width={140}
               height={75}
-              style={{ height: 32, width: "auto" }}
+              style={{ height: 38, width: "auto" }}
             />
             <span
               style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 500 }}
