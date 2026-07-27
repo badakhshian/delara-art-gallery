@@ -58,30 +58,27 @@ export default function ArtistPage() {
                 className="text-sm leading-relaxed"
                 style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
               >
-                Delara Ahmadi Darani is a mixed-media artist who builds acrylic
-                and modelling paste into raised, textured surfaces — giving her
-                paintings a sculptural, tactile quality rather than a flat
-                finish. She works one piece at a time under her studio, Delara
-                Art Gallery, treating each canvas as a unique original rather
-                than part of a series — no editions, no prints.
+                Delara’s work explores emotion through abstraction, texture, and color.
+                Rather than telling a specific story, each painting invites viewers to 
+                pause, reflect, and discover their own interpretation.
               </p>
               <p
                 className="text-sm leading-relaxed"
                 style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
               >
-                Her pieces explore movement and elemental themes, seen in
-                works like Wheel of Soaring and Fragments of Silence, and each
-                sells directly from the studio with full provenance and a
-                certificate of authenticity.
+                Working intuitively, she develops each piece through layered textures and 
+                expressive marks, allowing the composition to evolve naturally.
+                Depth, movement, and material are central to her creative process, 
+                resulting in paintings that reveal new details over time.
+
               </p>
               <p
                 className="text-sm leading-relaxed"
                 style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
               >
-                Alongside her art practice, she works professionally as a
-                building and architecture technician in Montreal, with several
-                years of experience in technical drafting and project
-                coordination, and is certified in Revit BIM.
+                Her goal is to create paintings that inspire connection, curiosity,
+                and a sense of timeless beauty—works that enrich a space while offering
+                a unique experience to every viewer.
               </p>
             </div>
 
