@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getPieces } from "@/lib/piecesStore";
-import { sortedCollections } from "@/lib/collections";
+import { getCollections } from "@/lib/collectionsStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -13,7 +13,10 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CollectionsPage() {
-  const orderedCollections = sortedCollections();
+  const collectionsList = await getCollections();
+  const orderedCollections = [...collectionsList].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
   const pieces = await getPieces();
 
   return (
