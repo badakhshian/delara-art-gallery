@@ -107,3 +107,6 @@ link.
   placeholder gradient until you add images
 - To add a brand-new piece: copy an existing block in `lib/pieces.js`, give
   it a unique `id`, and add its photo to `public/images/`
+
+
+  
