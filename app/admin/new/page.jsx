@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { palette } from "@/lib/palette";
-import { collections } from "@/lib/collections";
+import { resizeImageFile } from "@/lib/imageResize";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -21,6 +21,8 @@ const labelStyle = {
   letterSpacing: "0.08em",
 };
 
+const NEW_COLLECTION_VALUE = "__new__";
+
 function slugify(text) {
   return text
     .toLowerCase()
@@ -36,12 +38,25 @@ export default function NewPiecePage() {
   const [medium, setMedium] = useState("Acrylic and modelling paste on canvas");
   const [dims, setDims] = useState("");
   const [price, setPrice] = useState("");
-  const [collection, setCollection] = useState(collections[0]?.slug || "");
+  const [collectionsList, setCollectionsList] = useState([]);
+  const [collection, setCollection] = useState("");
+  const [newCollectionName, setNewCollectionName] = useState("");
   const [certificateId, setCertificateId] = useState("");
   const [story, setStory] = useState("");
   const [files, setFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((data) => {
+        const list = data.collections || [];
+        setCollectionsList(list);
+        if (list.length > 0) setCollection(list[0].slug);
+      })
+      .catch(() => setCollectionsList([]));
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -49,10 +64,27 @@ export default function NewPiecePage() {
     setError("");
 
     try {
+      let collectionSlug = collection;
+
+      if (collection === NEW_COLLECTION_VALUE) {
+        if (!newCollectionName.trim()) {
+          throw new Error("Enter a name for the new collection.");
+        }
+        const res = await fetch("/api/admin/collections", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: newCollectionName }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Could not create the collection.");
+        collectionSlug = data.collection.slug;
+      }
+
       const uploadedUrls = [];
       for (const file of files) {
+        const resized = await resizeImageFile(file);
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", resized);
         const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Photo upload failed.");
@@ -72,7 +104,7 @@ export default function NewPiecePage() {
           dims,
           priceCents,
           images: uploadedUrls,
-          collection,
+          collection: collectionSlug,
           certificateId,
           story,
         }),
@@ -171,13 +203,29 @@ export default function NewPiecePage() {
               onChange={(e) => setCollection(e.target.value)}
               style={{ ...inputStyle, appearance: "auto" }}
             >
-              {collections.map((c) => (
+              {collectionsList.map((c) => (
                 <option key={c.slug} value={c.slug}>
                   {c.name}
                 </option>
               ))}
+              <option value={NEW_COLLECTION_VALUE}>+ New collection…</option>
             </select>
           </div>
+
+          {collection === NEW_COLLECTION_VALUE && (
+            <div>
+              <label className="text-xs uppercase block mb-2" style={labelStyle}>
+                New collection name
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Elements in Motion"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+          )}
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
