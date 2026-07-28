@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPieces } from "@/lib/piecesStore";
-import { getCollection } from "@/lib/collections";
+import { getCollection } from "@/lib/collectionsStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
