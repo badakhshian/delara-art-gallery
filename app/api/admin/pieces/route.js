@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addPiece, deletePiece } from "@/lib/piecesStore";
+import { addPiece, deletePiece, updatePiece } from "@/lib/piecesStore";
 
 export async function POST(request) {
   try {
@@ -45,5 +45,26 @@ export async function DELETE(request) {
   } catch (err) {
     console.error("Delete piece error:", err);
     return NextResponse.json({ error: "Could not delete the piece." }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const body = await request.json();
+    if (!body.id) {
+      return NextResponse.json({ error: "Missing piece id." }, { status: 400 });
+    }
+
+    const { id, ...updates } = body;
+    const updated = await updatePiece(id, updates);
+
+    if (!updated) {
+      return NextResponse.json({ error: "Piece not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true, piece: updated });
+  } catch (err) {
+    console.error("Update piece error:", err);
+    return NextResponse.json({ error: "Could not update the piece." }, { status: 500 });
   }
 }
