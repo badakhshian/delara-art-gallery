@@ -6,8 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 
-export function generateMetadata({ params }) {
-  const collection = getCollection(params.slug);
+export async function generateMetadata({ params }) {
+  const collection = await getCollection(params.slug);
   if (!collection) return {};
   return { title: `${collection.name} — Delara Art Gallery` };
 }
@@ -15,7 +15,7 @@ export function generateMetadata({ params }) {
 export const dynamic = "force-dynamic";
 
 export default async function CollectionPage({ params }) {
-  const collection = getCollection(params.slug);
+  const collection = await getCollection(params.slug);
   if (!collection) notFound();
 
   const pieces = await getPieces();
