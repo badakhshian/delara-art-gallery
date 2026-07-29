@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { palette } from "@/lib/palette";
+import { adminPalette } from "@/lib/palette";
 
 export default function DeletePieceButton({ pieceId, pieceTitle }) {
   const [loading, setLoading] = useState(false);
@@ -35,9 +35,9 @@ export default function DeletePieceButton({ pieceId, pieceTitle }) {
       className="text-xs uppercase px-3 py-2"
       style={{
         fontFamily: "'IBM Plex Mono', monospace",
-        color: palette.oxblood,
+        color: adminPalette.oxblood,
         background: "none",
-        border: `1px solid ${palette.oxblood}`,
+        border: `1px solid ${adminPalette.oxblood}`,
         letterSpacing: "0.1em",
         cursor: loading ? "wait" : "pointer",
       }}
