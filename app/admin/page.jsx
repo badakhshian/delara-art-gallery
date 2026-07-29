@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPieces } from "@/lib/piecesStore";
 import { formatPrice } from "@/lib/pieces";
-import { palette } from "@/lib/palette";
+import { adminPalette } from "@/lib/palette";
 import DeletePieceButton from "@/components/admin/DeletePieceButton";
 import LogoutButton from "@/components/admin/LogoutButton";
 
@@ -12,21 +12,21 @@ export default async function AdminPage() {
   const pieces = await getPieces();
 
   return (
-    <div style={{ background: palette.void, minHeight: "100vh" }} className="px-6 sm:px-10 py-10">
+    <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-6 sm:px-10 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
         <div>
           <div
             className="text-xs uppercase mb-1"
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              color: palette.brass,
+              color: adminPalette.brass,
               letterSpacing: "0.12em",
             }}
           >
             Admin
           </div>
           <h1
-            style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
+            style={{ fontFamily: "'Fraunces', serif", color: adminPalette.text, fontWeight: 300 }}
             className="text-2xl"
           >
             Manage pieces
@@ -38,8 +38,8 @@ export default async function AdminPage() {
             className="text-xs uppercase px-4 py-2"
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              color: palette.void,
-              background: palette.brass,
+              color: adminPalette.surface,
+              background: adminPalette.brass,
               letterSpacing: "0.1em",
               textDecoration: "none",
             }}
@@ -55,14 +55,14 @@ export default async function AdminPage() {
           <div
             key={p.id}
             className="flex items-center gap-4 p-4"
-            style={{ background: palette.wall, border: `1px solid rgba(184,141,87,0.15)` }}
+            style={{ background: adminPalette.surface, border: `1px solid ${adminPalette.border}` }}
           >
             <div
               style={{
                 width: 64,
                 height: 64,
                 position: "relative",
-                background: palette.void,
+                background: adminPalette.bg,
                 flexShrink: 0,
               }}
             >
@@ -78,26 +78,26 @@ export default async function AdminPage() {
             </div>
             <div className="flex-1 min-w-0">
               <div
-                style={{ fontFamily: "'Fraunces', serif", color: palette.bone }}
+                style={{ fontFamily: "'Fraunces', serif", color: adminPalette.text }}
                 className="truncate"
               >
                 {p.title}
               </div>
               <div
                 className="text-xs"
-                style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke }}
+                style={{ fontFamily: "'IBM Plex Mono', monospace", color: adminPalette.muted }}
               >
                 {p.collection || "no collection"} · {formatPrice(p.priceCents)}
                 {p.sold ? " · sold" : ""}
               </div>
             </div>
-           <Link
+            <Link
               href={`/admin/edit/${p.id}`}
               className="text-xs uppercase px-3 py-2"
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",
-                color: palette.bone,
-                border: `1px solid rgba(184,141,87,0.4)`,
+                color: adminPalette.text,
+                border: `1px solid ${adminPalette.border}`,
                 letterSpacing: "0.1em",
                 textDecoration: "none",
               }}
@@ -105,12 +105,11 @@ export default async function AdminPage() {
               Edit
             </Link>
             <DeletePieceButton pieceId={p.id} pieceTitle={p.title} />
-
           </div>
         ))}
         {pieces.length === 0 && (
           <p
-            style={{ color: palette.smoke, fontFamily: "'Inter', sans-serif" }}
+            style={{ color: adminPalette.muted, fontFamily: "'Inter', sans-serif" }}
             className="text-sm"
           >
             No pieces yet.
