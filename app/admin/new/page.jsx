@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { palette } from "@/lib/palette";
+import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
-  background: palette.wall,
-  color: palette.bone,
-  border: `1px solid rgba(184,141,87,0.25)`,
+  background: adminPalette.surface,
+  color: adminPalette.text,
+  border: `1px solid ${adminPalette.border}`,
   padding: "10px 12px",
   width: "100%",
   outline: "none",
@@ -17,7 +17,7 @@ const inputStyle = {
 
 const labelStyle = {
   fontFamily: "'IBM Plex Mono', monospace",
-  color: palette.smoke,
+  color: adminPalette.muted,
   letterSpacing: "0.08em",
 };
 
@@ -122,13 +122,13 @@ export default function NewPiecePage() {
   }
 
   return (
-    <div style={{ background: palette.void, minHeight: "100vh" }} className="px-6 sm:px-14 py-14">
+    <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-6 sm:px-14 py-14">
       <div className="max-w-2xl mx-auto">
-        <div className="text-xs uppercase mb-3" style={{ ...labelStyle, color: palette.brass }}>
+        <div className="text-xs uppercase mb-3" style={{ ...labelStyle, color: adminPalette.brass }}>
           Admin
         </div>
         <h1
-          style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
+          style={{ fontFamily: "'Fraunces', serif", color: adminPalette.text, fontWeight: 300 }}
           className="text-2xl mb-8"
         >
           Add a new piece
@@ -271,8 +271,8 @@ export default function NewPiecePage() {
             className="text-xs uppercase px-5 py-3 self-start"
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              color: palette.void,
-              background: palette.brass,
+              color: adminPalette.text,
+              background: adminPalette.brass,
               letterSpacing: "0.1em",
               border: "none",
               cursor: submitting ? "wait" : "pointer",
@@ -283,7 +283,7 @@ export default function NewPiecePage() {
           </button>
 
           {error && (
-            <p className="text-xs" style={{ color: palette.oxblood, fontFamily: "'Inter', sans-serif" }}>
+            <p className="text-xs" style={{ color: adminPalette.oxblood, fontFamily: "'Inter', sans-serif" }}>
               {error}
             </p>
           )}
