@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { palette } from "@/lib/palette";
+import { adminPalette } from "@/lib/palette";
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -18,9 +18,9 @@ export default function LogoutButton() {
       className="text-xs uppercase px-4 py-2"
       style={{
         fontFamily: "'IBM Plex Mono', monospace",
-        color: palette.smoke,
+        color: adminPalette.muted,
         background: "none",
-        border: `1px solid rgba(184,141,87,0.3)`,
+        border: `1px solid ${adminPalette.border}`,
         letterSpacing: "0.1em",
         cursor: "pointer",
       }}
