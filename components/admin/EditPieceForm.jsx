@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { palette } from "@/lib/palette";
-import { collections } from "@/lib/collections";
+import { adminPalette } from "@/lib/palette";
+import { resizeImageFile } from "@/lib/imageResize";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
-  background: palette.wall,
-  color: palette.bone,
-  border: `1px solid rgba(184,141,87,0.25)`,
+  background: adminPalette.surface,
+  color: adminPalette.text,
+  border: `1px solid ${adminPalette.border}`,
   padding: "10px 12px",
   width: "100%",
   outline: "none",
@@ -18,9 +18,11 @@ const inputStyle = {
 
 const labelStyle = {
   fontFamily: "'IBM Plex Mono', monospace",
-  color: palette.smoke,
+  color: adminPalette.muted,
   letterSpacing: "0.08em",
 };
+
+const NEW_COLLECTION_VALUE = "__new__";
 
 export default function EditPieceForm({ piece }) {
   const router = useRouter();
@@ -31,7 +33,9 @@ export default function EditPieceForm({ piece }) {
   const [price, setPrice] = useState(
     piece.priceCents != null ? (piece.priceCents / 100).toString() : ""
   );
-  const [collection, setCollection] = useState(piece.collection || collections[0]?.slug || "");
+  const [collectionsList, setCollectionsList] = useState([]);
+  const [collection, setCollection] = useState(piece.collection || "");
+  const [newCollectionName, setNewCollectionName] = useState("");
   const [certificateId, setCertificateId] = useState(piece.certificateId || "");
   const [story, setStory] = useState(piece.story || "");
   const [sold, setSold] = useState(!!piece.sold);
@@ -39,6 +43,13 @@ export default function EditPieceForm({ piece }) {
   const [newFiles, setNewFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/collections")
+      .then((res) => res.json())
+      .then((data) => setCollectionsList(data.collections || []))
+      .catch(() => setCollectionsList([]));
+  }, []);
 
   function removeExistingImage(url) {
     setExistingImages((imgs) => imgs.filter((i) => i !== url));
@@ -50,10 +61,27 @@ export default function EditPieceForm({ piece }) {
     setError("");
 
     try {
+      let collectionSlug = collection;
+
+      if (collection === NEW_COLLECTION_VALUE) {
+        if (!newCollectionName.trim()) {
+          throw new Error("Enter a name for the new collection.");
+        }
+        const res = await fetch("/api/admin/collections", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: newCollectionName }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Could not create the collection.");
+        collectionSlug = data.collection.slug;
+      }
+
       const uploadedUrls = [];
       for (const file of newFiles) {
+        const resized = await resizeImageFile(file);
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", resized);
         const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Photo upload failed.");
@@ -73,7 +101,7 @@ export default function EditPieceForm({ piece }) {
           dims,
           priceCents,
           images: [...existingImages, ...uploadedUrls],
-          collection,
+          collection: collectionSlug,
           certificateId,
           story,
           sold,
@@ -92,13 +120,13 @@ export default function EditPieceForm({ piece }) {
   }
 
   return (
-    <div style={{ background: palette.void, minHeight: "100vh" }} className="px-6 sm:px-14 py-14">
+    <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-6 sm:px-14 py-14">
       <div className="max-w-2xl mx-auto">
-        <div className="text-xs uppercase mb-3" style={{ ...labelStyle, color: palette.brass }}>
+        <div className="text-xs uppercase mb-3" style={{ ...labelStyle, color: adminPalette.brass }}>
           Admin
         </div>
         <h1
-          style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
+          style={{ fontFamily: "'Fraunces', serif", color: adminPalette.text, fontWeight: 300 }}
           className="text-2xl mb-8"
         >
           Edit piece
@@ -171,13 +199,29 @@ export default function EditPieceForm({ piece }) {
               onChange={(e) => setCollection(e.target.value)}
               style={{ ...inputStyle, appearance: "auto" }}
             >
-              {collections.map((c) => (
+              {collectionsList.map((c) => (
                 <option key={c.slug} value={c.slug}>
                   {c.name}
                 </option>
               ))}
+              <option value={NEW_COLLECTION_VALUE}>+ New collection…</option>
             </select>
           </div>
+
+          {collection === NEW_COLLECTION_VALUE && (
+            <div>
+              <label className="text-xs uppercase block mb-2" style={labelStyle}>
+                New collection name
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Elements in Motion"
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+          )}
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
@@ -233,8 +277,8 @@ export default function EditPieceForm({ piece }) {
                         width: 22,
                         height: 22,
                         borderRadius: "50%",
-                        background: palette.oxblood,
-                        color: palette.bone,
+                        background: adminPalette.oxblood,
+                        color: adminPalette.surface,
                         border: "none",
                         cursor: "pointer",
                         fontSize: 12,
@@ -270,8 +314,8 @@ export default function EditPieceForm({ piece }) {
               className="text-xs uppercase px-5 py-3 self-start"
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",
-                color: palette.void,
-                background: palette.brass,
+                color: adminPalette.text,
+                background: adminPalette.brass,
                 letterSpacing: "0.1em",
                 border: "none",
                 cursor: submitting ? "wait" : "pointer",
@@ -286,7 +330,7 @@ export default function EditPieceForm({ piece }) {
               className="text-xs uppercase px-5 py-3"
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",
-                color: palette.smoke,
+                color: adminPalette.muted,
                 background: "none",
                 border: `1px solid rgba(184,141,87,0.3)`,
                 letterSpacing: "0.1em",
@@ -298,7 +342,7 @@ export default function EditPieceForm({ piece }) {
           </div>
 
           {error && (
-            <p className="text-xs" style={{ color: palette.oxblood, fontFamily: "'Inter', sans-serif" }}>
+            <p className="text-xs" style={{ color: adminPalette.oxblood, fontFamily: "'Inter', sans-serif" }}>
               {error}
             </p>
           )}
