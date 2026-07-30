@@ -265,22 +265,41 @@ export default function NewPiecePage() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="text-xs uppercase px-5 py-3 self-start"
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              color: adminPalette.text,
-              background: adminPalette.brass,
-              letterSpacing: "0.1em",
-              border: "none",
-              cursor: submitting ? "wait" : "pointer",
-              opacity: submitting ? 0.7 : 1,
-            }}
-          >
-            {submitting ? "Adding…" : "Add piece"}
-          </button>
+
+            <div className="flex items-center gap-4">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="text-xs uppercase px-5 py-3 self-start"
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                color: adminPalette.text,
+                background: adminPalette.brass,
+                letterSpacing: "0.1em",
+                border: "none",
+                cursor: submitting ? "wait" : "pointer",
+                opacity: submitting ? 0.7 : 1,
+              }}
+            >
+              {submitting ? "Adding…" : "Add piece"}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/admin")}
+              className="text-xs uppercase px-5 py-3"
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                color: adminPalette.muted,
+                background: "none",
+                border: `1px solid rgba(184,141,87,0.3)`,
+                letterSpacing: "0.1em",
+                cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+
 
           {error && (
             <p className="text-xs" style={{ color: adminPalette.oxblood, fontFamily: "'Inter', sans-serif" }}>
