@@ -16,7 +16,7 @@ export default function BuyButton({ piece }) {
     return (
       <button
         disabled
-        className="mt-10 text-xs uppercase px-5 py-3 self-start"
+        className="text-xs uppercase px-5 py-3"
         style={{
           ...sharedStyle,
           color: palette.smoke,
@@ -30,14 +30,13 @@ export default function BuyButton({ piece }) {
     );
   }
 
-  // No price set yet — send them to email instead of a buy flow.
   if (piece.priceCents == null) {
     return (
       <a
         href={`mailto:Ahmadi.delara@gmail.com?subject=${encodeURIComponent(
           `Inquiry: ${piece.title}`
         )}`}
-        className="mt-10 text-xs uppercase px-5 py-3 self-start inline-block"
+        className="text-xs uppercase px-5 py-3 inline-block"
         style={{
           ...sharedStyle,
           color: palette.void,
@@ -73,7 +72,7 @@ export default function BuyButton({ piece }) {
   }
 
   return (
-    <div className="mt-10 self-start">
+    <div>
       <button
         onClick={handleBuy}
         disabled={loading}
