@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getArtist } from "@/lib/artistStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,7 +9,11 @@ export const metadata = {
   title: "The Artist — Delara Art Gallery",
 };
 
-export default function ArtistPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ArtistPage() {
+  const artist = await getArtist();
+
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
@@ -30,14 +35,16 @@ export default function ArtistPage() {
             className="w-full overflow-hidden relative"
             style={{ aspectRatio: "3 / 4", background: palette.wall }}
           >
-            <Image
-              src="/images/delara-portrait.jpeg"
-              alt="Delara Ahmadi Darani"
-              fill
-              sizes="(max-width: 640px) 100vw, 280px"
-              style={{ objectFit: "cover" }}
-              priority
-            />
+            {artist.photo && (
+              <Image
+                src={artist.photo}
+                alt={artist.name}
+                fill
+                sizes="(max-width: 640px) 100vw, 280px"
+                style={{ objectFit: "cover" }}
+                priority
+              />
+            )}
           </div>
 
           <div>
@@ -50,36 +57,19 @@ export default function ArtistPage() {
                 lineHeight: 1.15,
               }}
             >
-              Delara Ahmadi Darani
+              {artist.name}
             </h1>
 
             <div className="mt-6 flex flex-col gap-4">
-              <p
-                className="text-sm leading-relaxed"
-                style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
-              >
-                Delara’s work explores emotion through abstraction, texture, and color.
-                Rather than telling a specific story, each painting invites viewers to 
-                pause, reflect, and discover their own interpretation.
-              </p>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
-              >
-                Working intuitively, she develops each piece through layered textures and 
-                expressive marks, allowing the composition to evolve naturally.
-                Depth, movement, and material are central to her creative process, 
-                resulting in paintings that reveal new details over time.
-
-              </p>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
-              >
-                Her goal is to create paintings that inspire connection, curiosity,
-                and a sense of timeless beauty—works that enrich a space while offering
-                a unique experience to every viewer.
-              </p>
+              {(artist.bio || []).map((paragraph, i) => (
+                <p
+                  key={i}
+                  className="text-sm leading-relaxed"
+                  style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
+                >
+                  {paragraph}
+                </p>
+              ))}
             </div>
 
             <Link
