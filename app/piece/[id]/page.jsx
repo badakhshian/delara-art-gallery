@@ -52,35 +52,30 @@ export default async function PieceDetailPage({ params, searchParams }) {
       breakPhotos.push({ src: hero, zoom: true });
     }
   }
-
-  return (
-
-        <div style={{ background: palette.void, minHeight: "100vh" }}>
-      <Header />
-
       {purchaseStatus === "success" && (
         <div
           style={{
-            background: palette.wall,
-            borderBottom: `1px solid rgba(184,141,87,0.25)`,
-            padding: "18px 24px",
+            background: palette.brass,
+            padding: "22px 24px",
             textAlign: "center",
           }}
         >
           <p
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: 12,
+              fontSize: 13,
               letterSpacing: "0.04em",
-              color: palette.bone,
+              color: palette.void,
               margin: 0,
+              fontWeight: 500,
             }}
           >
-            <span style={{ color: palette.brass }}>✓ Purchase confirmed —</span> thank you.
-            A receipt has been sent to your email, and Delara will be in touch about delivery.
+            ✓ PURCHASE CONFIRMED — thank you. A receipt has been sent to your email,
+            and Delara will be in touch about delivery.
           </p>
         </div>
       )}
+
 
       <div style={{ position: "relative" }}>
 
