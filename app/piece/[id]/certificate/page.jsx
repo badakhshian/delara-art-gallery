@@ -43,4 +43,108 @@ export default async function CertificatePage({ params }) {
             border-bottom-color: #111 !important;
           }
         }
-      `}
+      `}</style>
+
+      <div className="mb-6 print:hidden">
+        <PrintButton />
+      </div>
+
+      <div
+        className="certificate-card w-full max-w-2xl p-10 sm:p-14"
+        style={{ background: palette.wall }}
+      >
+        <div className="text-center mb-10">
+          <Image
+            src="/images/logo-gold.png"
+            alt="Delara Ahmadi Darani"
+            width={270}
+            height={152}
+            style={{ height: 56, width: "auto", margin: "0 auto 22px" }}
+          />
+          <h1
+            style={{
+              fontFamily: "'Fraunces', serif",
+              color: palette.bone,
+              fontWeight: 300,
+              fontSize: "1.75rem",
+            }}
+          >
+            Certificate of Authenticity
+          </h1>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10 pb-2">
+          <Field label="Title" value={piece.title} bone />
+          <Field label="Artist" value={piece.artist} />
+          <Field label="Year" value={piece.year} />
+          <Field label="Medium" value={piece.medium} />
+          <Field label="Dimensions" value={piece.dims} />
+          <Field label="Edition" value="Original, one of one" />
+          <Field label="Certificate ID" value={piece.certificateId} />
+          <Field label="Date issued" value={issueDate} />
+        </div>
+
+        <p
+          className="text-sm leading-relaxed mb-12"
+          style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
+        >
+          This certifies that the work described above is an original,
+          one-of-a-kind piece created by Delara Ahmadi Darani. No editions,
+          reproductions, or prints of this piece have been authorized by the
+          artist. This certificate should remain with the artwork as part of
+          its provenance.
+        </p>
+
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div style={{ minWidth: 220 }}>
+            <div
+              className="signature-line"
+              style={{
+                height: 48,
+                borderBottom: `1px solid rgba(232,227,216,0.4)`,
+              }}
+            />
+            <div
+              className="text-xs uppercase mt-2"
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                color: palette.smoke,
+                letterSpacing: "0.1em",
+              }}
+            >
+              Artist signature
+            </div>
+          </div>
+
+          <PieceQRCode piece={piece} size={84} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, value, bone }) {
+  return (
+    <div>
+      <div
+        className="text-[10px] uppercase"
+        style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          color: palette.smoke,
+          letterSpacing: "0.1em",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        className="text-sm mt-0.5"
+        style={{
+          fontFamily: bone ? "'Fraunces', serif" : "'Inter', sans-serif",
+          color: palette.bone,
+        }}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
