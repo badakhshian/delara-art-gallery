@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BuyButton from "@/components/BuyButton";
 import PieceQRCode from "@/components/PieceQRCode";
+import SoldStatusRefresher from "@/components/SoldStatusRefresher";
 
 export async function generateMetadata({ params }) {
   const piece = await getPiece(params.id);
@@ -54,8 +55,11 @@ export default async function PieceDetailPage({ params, searchParams }) {
   }
 
   return (
-    <div style={{ background: palette.void, minHeight: "100vh" }}>
+    
+        <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
+
+      <SoldStatusRefresher active={purchaseStatus === "success" && !piece.sold} />
 
       {purchaseStatus === "success" && (
 
