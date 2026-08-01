@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getPiece } from "@/lib/piecesStore";
 
+// STRIPE_SECRET_KEY must be set in your environment (see .env.example).
+// Never expose this key on the client — this file only runs on the server.
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-06-20",
 });
@@ -57,6 +59,11 @@ export async function POST(request) {
       ],
       shipping_address_collection: {
         allowed_countries: ["US", "CA"],
+      },
+      // Generates a real Stripe Invoice (with a PDF + hosted page) tied to
+      // this purchase, instead of just our own plain confirmation email.
+      invoice_creation: {
+        enabled: true,
       },
       metadata: { pieceId: piece.id },
       success_url: `${origin}/piece/${piece.id}?purchase=success`,
