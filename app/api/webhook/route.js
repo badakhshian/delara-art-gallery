@@ -98,6 +98,18 @@ export async function POST(request) {
     const amount = formatDollars(session.amount_total);
     const pieceTitle = piece?.title || pieceId || "your piece";
 
+    let invoicePdfUrl = null;
+    let invoiceHostedUrl = null;
+    if (session.invoice) {
+      try {
+        const invoice = await stripe.invoices.retrieve(session.invoice);
+        invoicePdfUrl = invoice.invoice_pdf;
+        invoiceHostedUrl = invoice.hosted_invoice_url;
+      } catch (err) {
+        console.error("Could not retrieve invoice:", err);
+      }
+    }
+
     if (process.env.RESEND_API_KEY) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       const fromAddress = process.env.RESEND_FROM_ADDRESS || "onboarding@resend.dev";
@@ -114,10 +126,15 @@ export async function POST(request) {
               "",
               `Thank you for your purchase of "${pieceTitle}" (${amount}) from Delara Art Gallery.`,
               "",
+              invoiceHostedUrl ? `View your invoice: ${invoiceHostedUrl}` : null,
+              invoicePdfUrl ? `Download PDF: ${invoicePdfUrl}` : null,
+              invoiceHostedUrl || invoicePdfUrl ? "" : null,
               "Delara will be in touch shortly to arrange delivery.",
               "",
               "— Delara Art Gallery",
-            ].join("\n"),
+            ]
+              .filter((line) => line !== null)
+              .join("\n"),
           });
         } catch (err) {
           console.error("Buyer confirmation email failed:", err);
@@ -138,6 +155,7 @@ export async function POST(request) {
             shipping
               ? `Shipping: ${shipping.address?.line1 || ""} ${shipping.address?.line2 || ""}, ${shipping.address?.city || ""}, ${shipping.address?.state || ""} ${shipping.address?.postal_code || ""}, ${shipping.address?.country || ""}`
               : null,
+            invoiceHostedUrl ? `Invoice: ${invoiceHostedUrl}` : null,
           ]
             .filter(Boolean)
             .join("\n"),
