@@ -72,7 +72,7 @@ export default async function CertificatePage({ params }) {
             alt="Delara Ahmadi Darani"
             width={270}
             height={152}
-            style={{ height: 56, width: "auto", margin: "0 auto 22px" }}
+            style={{ height: 88, width: "auto", margin: "0 auto 22px" }}
           />
           <h1
             style={{
