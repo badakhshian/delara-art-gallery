@@ -1,11 +1,53 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Resend } from "resend";
+import { list, put } from "@vercel/blob";
 import { updatePiece, getPiece } from "@/lib/piecesStore";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-06-20",
 });
+
+export const maxDuration = 30;
+
+const PROCESSED_EVENTS_PATH = "data/processed-webhook-events.json";
+
+async function isEventProcessed(eventId) {
+  try {
+    const { blobs } = await list({ prefix: PROCESSED_EVENTS_PATH });
+    const match = blobs.find((b) => b.pathname === PROCESSED_EVENTS_PATH);
+    if (!match) return false;
+    const res = await fetch(match.url, { cache: "no-store" });
+    if (!res.ok) return false;
+    const ids = await res.json();
+    return Array.isArray(ids) && ids.includes(eventId);
+  } catch (err) {
+    console.error("isEventProcessed error:", err);
+    return false;
+  }
+}
+
+async function markEventProcessed(eventId) {
+  try {
+    const { blobs } = await list({ prefix: PROCESSED_EVENTS_PATH });
+    const match = blobs.find((b) => b.pathname === PROCESSED_EVENTS_PATH);
+    let ids = [];
+    if (match) {
+      const res = await fetch(match.url, { cache: "no-store" });
+      if (res.ok) ids = await res.json();
+    }
+    ids.push(eventId);
+    const trimmed = ids.slice(-300);
+    await put(PROCESSED_EVENTS_PATH, JSON.stringify(trimmed), {
+      access: "public",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: "application/json",
+    });
+  } catch (err) {
+    console.error("markEventProcessed error:", err);
+  }
+}
 
 function formatDollars(cents) {
   return (cents / 100).toLocaleString("en-US", {
@@ -32,6 +74,15 @@ export async function POST(request) {
   }
 
   if (event.type === "checkout.session.completed") {
+    const alreadyProcessed = await isEventProcessed(event.id);
+
+    if (alreadyProcessed) {
+      console.log(`Event ${event.id} already processed — skipping (this was a Stripe retry).`);
+      return NextResponse.json({ received: true, skipped: true });
+    }
+
+    await markEventProcessed(event.id);
+
     const session = event.data.object;
     const pieceId = session.metadata?.pieceId;
 
@@ -51,7 +102,6 @@ export async function POST(request) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       const fromAddress = process.env.RESEND_FROM_ADDRESS || "onboarding@resend.dev";
 
-      // Confirmation to the buyer
       if (buyerEmail) {
         try {
           await resend.emails.send({
@@ -74,7 +124,6 @@ export async function POST(request) {
         }
       }
 
-      // Notification to Delara
       try {
         await resend.emails.send({
           from: fromAddress,
