@@ -28,7 +28,7 @@ export default function Footer() {
             style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke }}
             className="text-xs mt-2"
           >
-            Viewings by appointment · Est. 2024
+            Viewings by appointment · Est. 2003
           </div>
         </div>
 
