@@ -259,7 +259,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
 
       <Footer />
 
-      <div
+            <div
         style={{
           position: "fixed",
           left: 0,
@@ -270,11 +270,11 @@ export default async function PieceDetailPage({ params, searchParams }) {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "16px 24px",
-          background: "rgba(14,13,12,0.96)",
+          background: palette.void,
           borderTop: `1px solid rgba(184,141,87,0.25)`,
-          backdropFilter: "blur(6px)",
         }}
       >
+
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: palette.bone }}>
           <span
             style={{
