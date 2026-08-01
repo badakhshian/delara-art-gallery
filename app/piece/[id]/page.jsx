@@ -21,9 +21,12 @@ export const dynamic = "force-dynamic";
 
 const ZOOM_POSITIONS = ["30% 20%", "70% 65%", "50% 90%", "20% 70%"];
 
-export default async function PieceDetailPage({ params }) {
+
+export default async function PieceDetailPage({ params, searchParams }) {
   const piece = await getPiece(params.id);
   if (!piece) notFound();
+
+  const purchaseStatus = searchParams?.purchase;
 
   const images = piece.images || [];
   const hero = images[0] || null;
