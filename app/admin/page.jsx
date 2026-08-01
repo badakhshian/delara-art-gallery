@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getPieces } from "@/lib/piecesStore";
 import { formatPrice } from "@/lib/pieces";
 import { adminPalette } from "@/lib/palette";
+import AdminTabs from "@/components/admin/AdminTabs";
 import DeletePieceButton from "@/components/admin/DeletePieceButton";
 import LogoutButton from "@/components/admin/LogoutButton";
 
@@ -25,12 +26,7 @@ export default async function AdminPage() {
           >
             Admin
           </div>
-          <h1
-            style={{ fontFamily: "'Fraunces', serif", color: adminPalette.text, fontWeight: 300 }}
-            className="text-2xl"
-          >
-            Manage pieces
-          </h1>
+          <AdminTabs active="pieces" />
         </div>
         <div className="flex items-center gap-3">
           <Link
