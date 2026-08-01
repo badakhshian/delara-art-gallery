@@ -25,22 +25,35 @@ export default async function CertificatePage({ params }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center py-12 px-6"
+      className="cert-page-wrapper min-h-screen flex flex-col items-center py-12 px-6"
       style={{ background: palette.void }}
     >
       <style>{`
         @media print {
-          @page { margin: 0.6in; }
+          @page { margin: 0.5in; }
           body { background: #fff !important; }
+          .cert-page-wrapper {
+            min-height: auto !important;
+            height: auto !important;
+            display: block !important;
+            padding: 0 !important;
+          }
           .certificate-card {
             background: #fff !important;
             color: #111 !important;
+            max-width: 100% !important;
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
           .certificate-card * {
             color: #111 !important;
           }
           .certificate-card .signature-line {
             border-bottom-color: #111 !important;
+          }
+          .signature-row {
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
         }
       `}</style>
@@ -95,7 +108,7 @@ export default async function CertificatePage({ params }) {
           its provenance.
         </p>
 
-        <div className="flex items-end justify-between gap-6 flex-wrap">
+        <div className="signature-row flex items-end justify-between gap-6 flex-wrap">
           <div style={{ minWidth: 220 }}>
             <div
               className="signature-line"
