@@ -63,12 +63,6 @@ export default async function HomePage() {
         >
           <div>
             <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
-              14 day
-            </div>
-            return window
-          </div>
-          <div>
-            <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
               1 of 1
             </div>
             no editions, no prints
