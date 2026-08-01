@@ -52,7 +52,13 @@ export default async function PieceDetailPage({ params, searchParams }) {
       breakPhotos.push({ src: hero, zoom: true });
     }
   }
+
+  return (
+    <div style={{ background: palette.void, minHeight: "100vh" }}>
+      <Header />
+
       {purchaseStatus === "success" && (
+
         <div
           style={{
             background: palette.brass,
