@@ -60,8 +60,7 @@ export default async function CertificatePage({ params }) {
         }
       `}</style>
 
-      <div className="mb-6 print:hidden w-full max-w-2xl flex items-center justify-between">
-      <div className="mb-6 print:hidden w-full max-w-2xl flex items-center justify-between">
+           <div className="mb-6 print:hidden w-full max-w-2xl flex items-center justify-between">
         <CertificateBackButton pieceId={piece.id} />
         <PrintButton />
       </div>
