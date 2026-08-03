@@ -58,9 +58,23 @@ export default async function CertificatePage({ params }) {
         }
       `}</style>
 
-      <div className="mb-6 print:hidden">
+      <div className="mb-6 print:hidden w-full max-w-2xl flex items-center justify-between">
+        <a
+          href={`/piece/${piece.id}`}
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 11,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: palette.smoke,
+            textDecoration: "none",
+          }}
+        >
+          ← Back to piece
+        </a>
         <PrintButton />
       </div>
+
 
       <div
         className="certificate-card w-full max-w-2xl p-10 sm:p-14"
