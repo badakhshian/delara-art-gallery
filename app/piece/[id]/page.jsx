@@ -99,25 +99,9 @@ export default async function PieceDetailPage({ params, searchParams }) {
         ) : (
           <div style={{ width: "100%", height: "60vh", background: palette.wall }} />
         )}
-        <a
-          href="/"
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 20,
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 11,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: palette.bone,
-            textDecoration: "none",
-            background: "rgba(14,13,12,0.45)",
-            padding: "7px 12px",
-            backdropFilter: "blur(3px)",
-          }}
-        >
-          ← Back
-        </a>
+        
+       <BackButton />
+
         <div
           style={{
             position: "absolute",
