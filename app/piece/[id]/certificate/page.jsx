@@ -4,6 +4,8 @@ import { getPiece } from "@/lib/piecesStore";
 import { palette } from "@/lib/palette";
 import PieceQRCode from "@/components/PieceQRCode";
 import PrintButton from "@/components/PrintButton";
+import CertificateBackButton from "@/components/CertificateBackButton";
+
 
 export async function generateMetadata({ params }) {
   const piece = await getPiece(params.id);
