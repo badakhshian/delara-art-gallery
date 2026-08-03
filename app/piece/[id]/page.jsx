@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import BuyButton from "@/components/BuyButton";
 import PieceQRCode from "@/components/PieceQRCode";
 import SoldStatusRefresher from "@/components/SoldStatusRefresher";
+import BackButton from "@/components/BackButton";
 
 export async function generateMetadata({ params }) {
   const piece = await getPiece(params.id);
