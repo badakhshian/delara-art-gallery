@@ -14,3 +14,28 @@ body {
 a {
   color: inherit;
 }
+
+/* Custom cursor (public pages only — skipped on /admin) */
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #B08D57;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
+  mix-blend-mode: difference;
+}
+.custom-cursor-dot.cursor-hover {
+  width: 28px;
+  height: 28px;
+  background: #E8E3D8;
+}
+body.custom-cursor-active,
+body.custom-cursor-active a,
+body.custom-cursor-active button {
+  cursor: none;
+}
