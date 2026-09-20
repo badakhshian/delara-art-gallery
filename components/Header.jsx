@@ -13,11 +13,10 @@ export default function Header() {
   return (
     <header
       className="sticky top-0 z-20"
-      style={{
-        background: "rgba(14,13,12,0.85)",
-        backdropFilter: "blur(6px)",
-        borderBottom: `1px solid rgba(184,141,87,0.15)`,
+            style={{
+        background: "transparent",
       }}
+
     >
       <div className="flex items-center justify-between px-8 py-3">
                 <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
