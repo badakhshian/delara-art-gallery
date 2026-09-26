@@ -12,12 +12,12 @@ export default function Header() {
 
   return (
     <header
-      className="sticky top-0 z-20"
-            style={{
+      className="fixed top-0 left-0 right-0 z-20"
+      style={{
         background: "transparent",
       }}
-
     >
+
       <div className="flex items-center justify-between px-8 py-3">
                 <Link href="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
           <Image
