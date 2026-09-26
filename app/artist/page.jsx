@@ -18,7 +18,8 @@ export default async function ArtistPage() {
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      <div className="px-6 sm:px-14 py-14 max-w-4xl mx-auto">
+      <div className="px-6 sm:px-14 pt-32 pb-14 max-w-4xl mx-auto">
+
         <div
           className="text-xs uppercase mb-3"
           style={{
