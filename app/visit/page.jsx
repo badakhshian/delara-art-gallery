@@ -69,7 +69,7 @@ export default function VisitPage() {
     return (
       <div style={{ background: palette.void, minHeight: "100vh" }}>
         <Header />
-        <div className="px-6 sm:px-14 py-24 max-w-2xl mx-auto text-center">
+        <div className="px-6 sm:px-14 pt-32 pb-14 max-w-2xl mx-auto">
           <div
             className="text-xs uppercase mb-3"
             style={{ ...labelStyle, color: palette.brass }}
@@ -103,7 +103,7 @@ export default function VisitPage() {
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      <div className="px-6 sm:px-14 py-14 max-w-2xl mx-auto">
+      <div className="px-6 sm:px-14 pt-32 pb-14 max-w-2xl mx-auto">
         <div
           className="text-xs uppercase mb-3"
           style={{ ...labelStyle, color: palette.brass }}
