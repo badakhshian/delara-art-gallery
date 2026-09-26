@@ -25,7 +25,8 @@ export default async function CollectionPage({ params }) {
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      <div className="px-8 py-16">
+      <div className="px-8 pt-32 pb-16">
+
         <div
           className="text-xs uppercase mb-2"
           style={{
