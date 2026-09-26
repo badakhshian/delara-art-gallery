@@ -23,7 +23,7 @@ export default async function CollectionsPage() {
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      <div className="px-8 pt-14 pb-4">
+      <div className="px-8 pt-32 pb-4">
         <div
           className="text-xs uppercase mb-2"
           style={{
