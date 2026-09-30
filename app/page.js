@@ -3,9 +3,16 @@ import { getPieces } from "@/lib/piecesStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+import HeroCarousel from "@/components/HeroCarousel";
+import Reveal from "@/components/Reveal";
+import WallAccordion from "@/components/WallAccordion";
+
+/*
 import ArtworkCard from "@/components/ArtworkCard";
 import HeroCarousel from "@/components/HeroCarousel";
 import Reveal from "@/components/Reveal";
+*/
 
 export const dynamic = "force-dynamic";
 
@@ -35,8 +42,11 @@ export default async function HomePage() {
             </span>
           </div>
         </Reveal>
+        <Reveal>
+          <WallAccordion pieces={pieces} />
+        </Reveal>
 
-        <div className="flex gap-8 overflow-x-auto pb-6" style={{ scrollbarWidth: "thin" }}>
+        /*<div className="flex gap-8 overflow-x-auto pb-6" style={{ scrollbarWidth: "thin" }}>
           {pieces.map((p, i) => (
             <Reveal key={p.id} delay={Math.min(i * 0.08, 0.4)}>
               <div style={{ minWidth: 260, maxWidth: 260 }}>
@@ -44,7 +54,7 @@ export default async function HomePage() {
               </div>
             </Reveal>
           ))}
-        </div>
+        </div>*/
       </section>
 
       <section
