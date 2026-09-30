@@ -1,0 +1,270 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { palette } from "@/lib/palette";
+import { formatPrice } from "@/lib/pieces";
+
+const WINDOW_SIZE = 6;
+const SLIDE_COOLDOWN_MS = 550;
+
+export default function WallAccordion({ pieces }) {
+  const total = pieces.length;
+  const effectiveWindowSize = Math.min(WINDOW_SIZE, total);
+  const [windowStart, setWindowStart] = useState(0);
+  const [activePieceId, setActivePieceId] = useState(pieces[0]?.id ?? null);
+  const slidingRef = useRef(false);
+
+  const visible = pieces.slice(windowStart, windowStart + effectiveWindowSize);
+
+  useEffect(() => {
+    if (!visible.some((p) => p.id === activePieceId)) {
+      setActivePieceId(visible[0]?.id ?? null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [windowStart]);
+
+  function triggerSlide(direction) {
+    if (slidingRef.current) return;
+    slidingRef.current = true;
+    setWindowStart((start) => {
+      const next = start + direction;
+      return Math.max(0, Math.min(next, total - effectiveWindowSize));
+    });
+    setTimeout(() => {
+      slidingRef.current = false;
+    }, SLIDE_COOLDOWN_MS);
+  }
+
+  function handleHover(piece, indexInWindow) {
+    setActivePieceId(piece.id);
+
+    if (indexInWindow === 0 && windowStart > 0) {
+      triggerSlide(-1);
+    } else if (
+      indexInWindow >= effectiveWindowSize - 3 &&
+      windowStart + effectiveWindowSize < total
+    ) {
+      triggerSlide(1);
+    }
+  }
+
+  function handleRowLeave() {
+    setActivePieceId(visible[0]?.id ?? null);
+  }
+
+  if (total === 0) return null;
+
+  return (
+    <>
+      <div
+        className="hidden sm:flex gap-2"
+        style={{ height: 420 }}
+        onMouseLeave={handleRowLeave}
+      >
+        {visible.map((piece, i) => {
+          const isActive = piece.id === activePieceId;
+          return (
+            <Link
+              key={piece.id}
+              href={`/piece/${piece.id}`}
+              onMouseEnter={() => handleHover(piece, i)}
+              style={{
+                position: "relative",
+                flex: isActive ? 3.2 : 1,
+                minWidth: 0,
+                overflow: "hidden",
+                background: palette.wall,
+                transition: "flex 0.55s cubic-bezier(.2,.8,.2,1)",
+                textDecoration: "none",
+                display: "block",
+              }}
+            >
+              {piece.images?.[0] && (
+                <Image
+                  src={piece.images[0]}
+                  alt={piece.title}
+                  fill
+                  sizes="(max-width: 1024px) 33vw, 20vw"
+                  style={{ objectFit: "cover" }}
+                />
+              )}
+
+              {piece.sold && (
+                <div
+                  className="absolute top-3 right-3 px-2 py-1 text-[10px] uppercase"
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    background: "rgba(14,13,12,0.85)",
+                    color: palette.bone,
+                    letterSpacing: "0.1em",
+                    zIndex: 2,
+                  }}
+                >
+                  Sold
+                </div>
+              )}
+
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: isActive ? "45%" : "70%",
+                  background:
+                    "linear-gradient(180deg, rgba(14,13,12,0) 0%, rgba(14,13,12,0.92) 100%)",
+                  transition: "height 0.4s ease",
+                }}
+              />
+
+              {isActive ? (
+                <div className="absolute left-0 right-0 bottom-0 p-4">
+                  <div
+                    style={{
+                      fontFamily: "'Fraunces', serif",
+                      color: palette.bone,
+                      fontWeight: 400,
+                      fontSize: "1.1rem",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {piece.title}
+                  </div>
+                  <div
+                    className="mt-1"
+                    style={{
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      color: palette.brass,
+                      fontSize: 12,
+                    }}
+                  >
+                    {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="absolute left-0 bottom-4"
+                  style={{
+                    writingMode: "vertical-rl",
+                    transform: "rotate(180deg)",
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    color: palette.bone,
+                    fontSize: 11,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    padding: "10px 6px",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {piece.title}
+                </div>
+              )}
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="flex sm:hidden flex-col gap-3">
+        {pieces.map((piece) => (
+          <MobileAccordionPanel key={piece.id} piece={piece} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function MobileAccordionPanel({ piece }) {
+  const ref = useRef(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setActive(entry.intersectionRatio > 0.55);
+      },
+      { threshold: [0, 0.55, 1] }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <Link
+      ref={ref}
+      href={`/piece/${piece.id}`}
+      style={{
+        position: "relative",
+        display: "block",
+        height: active ? 380 : 90,
+        overflow: "hidden",
+        background: palette.wall,
+        transition: "height 0.5s cubic-bezier(.2,.8,.2,1)",
+        textDecoration: "none",
+      }}
+    >
+      {piece.images?.[0] && (
+        <Image
+          src={piece.images[0]}
+          alt={piece.title}
+          fill
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+        />
+      )}
+      {piece.sold && (
+        <div
+          className="absolute top-3 right-3 px-2 py-1 text-[10px] uppercase"
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            background: "rgba(14,13,12,0.85)",
+            color: palette.bone,
+            letterSpacing: "0.1em",
+            zIndex: 2,
+          }}
+        >
+          Sold
+        </div>
+      )}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: "60%",
+          background: "linear-gradient(180deg, rgba(14,13,12,0) 0%, rgba(14,13,12,0.92) 100%)",
+        }}
+      />
+      <div className="absolute left-0 right-0 bottom-0 p-4">
+        <div
+          style={{
+            fontFamily: "'Fraunces', serif",
+            color: palette.bone,
+            fontWeight: 400,
+            fontSize: active ? "1.1rem" : "0.95rem",
+            lineHeight: 1.2,
+            transition: "font-size 0.4s ease",
+          }}
+        >
+          {piece.title}
+        </div>
+        {active && (
+          <div
+            className="mt-1"
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              color: palette.brass,
+              fontSize: 12,
+            }}
+          >
+            {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
