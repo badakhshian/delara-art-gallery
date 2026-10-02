@@ -58,6 +58,7 @@ export default function WallAccordion({ pieces }) {
 
   return (
     <>
+      {/* Desktop: hover accordion, sliding window over the whole catalog */}
       <div
         className="hidden sm:flex gap-2"
         style={{ height: 420 }}
@@ -166,35 +167,76 @@ export default function WallAccordion({ pieces }) {
         })}
       </div>
 
-      <div className="flex sm:hidden flex-col gap-3">
-        {pieces.map((piece) => (
-          <MobileAccordionPanel key={piece.id} piece={piece} />
-        ))}
-      </div>
+      {/* Mobile: scroll-driven vertical stack */}
+      <MobileAccordionStack pieces={pieces} />
     </>
   );
 }
 
-function MobileAccordionPanel({ piece }) {
-  const ref = useRef(null);
-  const [active, setActive] = useState(false);
+// A single piece of logic decides which ONE panel is "active" (closest to
+// the vertical center of the screen), instead of each panel deciding for
+// itself. That avoids two panels both thinking they're active at once,
+// which was causing a feedback loop of rapid height changes ("shaking")
+// as expanding one panel shifted the positions of the others underneath it.
+function MobileAccordionStack({ pieces }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const refs = useRef([]);
+  const tickingRef = useRef(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setActive(entry.intersectionRatio > 0.55);
-      },
-      { threshold: [0, 0.55, 1] }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    function computeActive() {
+      const viewportCenter = window.innerHeight / 2;
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      refs.current.forEach((el, i) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const panelCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(panelCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = i;
+        }
+      });
+
+      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+      tickingRef.current = false;
+    }
+
+    function onScroll() {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+      requestAnimationFrame(computeActive);
+    }
+
+    computeActive();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (
+    <div className="flex sm:hidden flex-col gap-3">
+      {pieces.map((piece, i) => (
+        <MobileAccordionPanel
+          key={piece.id}
+          piece={piece}
+          active={i === activeIndex}
+          panelRef={(el) => (refs.current[i] = el)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function MobileAccordionPanel({ piece, active, panelRef }) {
+  return (
     <Link
-      ref={ref}
+      ref={panelRef}
       href={`/piece/${piece.id}`}
       style={{
         position: "relative",
