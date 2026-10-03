@@ -6,7 +6,7 @@ import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { formatPrice } from "@/lib/pieces";
 
-const WINDOW_SIZE = 10;
+const WINDOW_SIZE = 6;
 const SLIDE_COOLDOWN_MS = 550;
 
 export default function WallAccordion({ pieces }) {
