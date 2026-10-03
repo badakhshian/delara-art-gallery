@@ -43,6 +43,7 @@ export default function NewPiecePage() {
   const [newCollectionName, setNewCollectionName] = useState("");
   const [certificateId, setCertificateId] = useState("");
   const [story, setStory] = useState("");
+  const [onWall, setOnWall] = useState(true);
   const [files, setFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -107,10 +108,12 @@ export default function NewPiecePage() {
           collection: collectionSlug,
           certificateId,
           story,
+          onWall,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not add the piece.");
+
 
       router.push("/admin");
       router.refresh();
@@ -252,10 +255,16 @@ export default function NewPiecePage() {
             />
           </div>
 
+            <label className="flex items-center gap-2 text-xs uppercase" style={labelStyle}>
+            <input type="checkbox" checked={onWall} onChange={(e) => setOnWall(e.target.checked)} />
+            Show on "Currently on the wall"
+          </label>
+
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
               Photos
             </label>
+
             <input
               type="file"
               accept="image/*"
