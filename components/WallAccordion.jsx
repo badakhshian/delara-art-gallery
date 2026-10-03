@@ -10,12 +10,6 @@ const WINDOW_SIZE = 6;
 const SLIDE_COOLDOWN_MS = 550;
 
 export default function WallAccordion({ pieces }) {
-  // Detect actual touch hardware directly, rather than relying on
-  // "hover: hover" — a touchscreen Windows laptop often also has a
-  // trackpad, so it can report itself as hover-capable even though
-  // someone's using their finger on the screen. Any device with real
-  // touch support (iPad, a touchscreen laptop, etc) gets the swipe row;
-  // only devices with no touch hardware at all get the hover row.
   const [hasTouch, setHasTouch] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -30,14 +24,10 @@ export default function WallAccordion({ pieces }) {
 
   return (
     <>
-      {/* sm and up: hover-driven row on mouse-only devices, horizontal
-          swipe-to-scroll row on anything with touch (iPad, touchscreen
-          Windows laptops, etc) */}
       <div className="hidden sm:block">
         {hasTouch ? <TouchScrollRow pieces={pieces} /> : <HoverRow pieces={pieces} />}
       </div>
 
-      {/* Below sm: vertical scroll-driven stack */}
       <MobileAccordionStack pieces={pieces} />
     </>
   );
@@ -103,11 +93,10 @@ function HoverRow({ pieces }) {
   );
 }
 
-// ---------- Touch (sm+): native horizontal scroll, center panel expands ----------
+// ---------- Touch (sm+): native horizontal scroll, proportional active index ----------
 function TouchScrollRow({ pieces }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
-  const refs = useRef([]);
   const tickingRef = useRef(false);
 
   useEffect(() => {
@@ -115,23 +104,13 @@ function TouchScrollRow({ pieces }) {
     if (!container) return;
 
     function computeActive() {
-      const containerRect = container.getBoundingClientRect();
-      const centerX = containerRect.left + containerRect.width / 2;
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-
-      refs.current.forEach((el, i) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const panelCenter = rect.left + rect.width / 2;
-        const distance = Math.abs(panelCenter - centerX);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = i;
-        }
-      });
-
-      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      let index = 0;
+      if (maxScrollLeft > 0) {
+        const progress = Math.min(1, Math.max(0, container.scrollLeft / maxScrollLeft));
+        index = Math.round(progress * (pieces.length - 1));
+      }
+      setActiveIndex((prev) => (prev === index ? prev : index));
       tickingRef.current = false;
     }
 
@@ -157,22 +136,16 @@ function TouchScrollRow({ pieces }) {
       style={{ height: 420, WebkitOverflowScrolling: "touch" }}
     >
       {pieces.map((piece, i) => (
-        <AccordionPanel
-          key={piece.id}
-          piece={piece}
-          active={i === activeIndex}
-          panelRef={(el) => (refs.current[i] = el)}
-        />
+        <AccordionPanel key={piece.id} piece={piece} active={i === activeIndex} />
       ))}
     </div>
   );
 }
 
 // ---------- Shared panel, used by both desktop hover row and touch scroll row ----------
-function AccordionPanel({ piece, active, onMouseEnter, panelRef, flexMode }) {
+function AccordionPanel({ piece, active, onMouseEnter, flexMode }) {
   return (
     <Link
-      ref={panelRef}
       href={`/piece/${piece.id}`}
       onMouseEnter={onMouseEnter}
       style={{
@@ -266,30 +239,32 @@ function AccordionPanel({ piece, active, onMouseEnter, panelRef, flexMode }) {
   );
 }
 
-// ---------- Below sm: vertical scroll-driven stack ----------
+// ---------- Below sm: vertical scroll-driven stack, proportional to this
+// section's own scroll range (not the whole page) ----------
 function MobileAccordionStack({ pieces }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const refs = useRef([]);
+  const wrapperRef = useRef(null);
   const tickingRef = useRef(false);
 
   useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
     function computeActive() {
-      const viewportCenter = window.innerHeight / 2;
-      let closestIndex = 0;
-      let closestDistance = Infinity;
+      const rect = wrapper.getBoundingClientRect();
+      const absoluteTop = rect.top + window.scrollY;
+      const absoluteBottom = rect.bottom + window.scrollY;
+      const start = absoluteTop;
+      const end = absoluteBottom - window.innerHeight;
+      const range = end - start;
 
-      refs.current.forEach((el, i) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const panelCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(panelCenter - viewportCenter);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = i;
-        }
-      });
+      let index = 0;
+      if (range > 0) {
+        const progress = Math.min(1, Math.max(0, (window.scrollY - start) / range));
+        index = Math.round(progress * (pieces.length - 1));
+      }
 
-      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+      setActiveIndex((prev) => (prev === index ? prev : index));
       tickingRef.current = false;
     }
 
@@ -306,26 +281,20 @@ function MobileAccordionStack({ pieces }) {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [pieces.length]);
 
   return (
-    <div className="flex sm:hidden flex-col gap-3">
+    <div ref={wrapperRef} className="flex sm:hidden flex-col gap-3">
       {pieces.map((piece, i) => (
-        <MobileAccordionPanel
-          key={piece.id}
-          piece={piece}
-          active={i === activeIndex}
-          panelRef={(el) => (refs.current[i] = el)}
-        />
+        <MobileAccordionPanel key={piece.id} piece={piece} active={i === activeIndex} />
       ))}
     </div>
   );
 }
 
-function MobileAccordionPanel({ piece, active, panelRef }) {
+function MobileAccordionPanel({ piece, active }) {
   return (
     <Link
-      ref={panelRef}
       href={`/piece/${piece.id}`}
       style={{
         position: "relative",
