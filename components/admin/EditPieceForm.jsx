@@ -39,6 +39,7 @@ export default function EditPieceForm({ piece }) {
   const [certificateId, setCertificateId] = useState(piece.certificateId || "");
   const [story, setStory] = useState(piece.story || "");
   const [sold, setSold] = useState(!!piece.sold);
+  const [onWall, setOnWall] = useState(piece.onWall !== false);
   const [existingImages, setExistingImages] = useState(piece.images || []);
   const [newFiles, setNewFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -105,10 +106,12 @@ export default function EditPieceForm({ piece }) {
           certificateId,
           story,
           sold,
+          onWall,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not save changes.");
+
 
       router.push("/admin");
       router.refresh();
@@ -251,6 +254,12 @@ export default function EditPieceForm({ piece }) {
             <input type="checkbox" checked={sold} onChange={(e) => setSold(e.target.checked)} />
             Mark as sold
           </label>
+
+          <label className="flex items-center gap-2 text-xs uppercase" style={labelStyle}>
+            <input type="checkbox" checked={onWall} onChange={(e) => setOnWall(e.target.checked)} />
+            Show on "Currently on the wall"
+          </label>
+
 
           {existingImages.length > 0 && (
             <div>
