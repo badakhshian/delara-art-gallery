@@ -6,26 +6,13 @@ import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { formatPrice } from "@/lib/pieces";
 
-const WINDOW_SIZE = 6;
-const SLIDE_COOLDOWN_MS = 550;
-
 export default function WallAccordion({ pieces }) {
-  const [hasTouch, setHasTouch] = useState(false);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const touchCapable =
-      "ontouchstart" in window ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
-      (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0);
-    setHasTouch(!!touchCapable);
-  }, []);
-
   if (pieces.length === 0) return null;
 
   return (
     <>
       <div className="hidden sm:block">
-        {hasTouch ? <TouchScrollRow pieces={pieces} /> : <HoverRow pieces={pieces} />}
+        <AccordionRow pieces={pieces} />
       </div>
 
       <MobileAccordionStack pieces={pieces} />
@@ -33,68 +20,7 @@ export default function WallAccordion({ pieces }) {
   );
 }
 
-// ---------- Desktop: hover + sliding window over the whole catalog ----------
-function HoverRow({ pieces }) {
-  const total = pieces.length;
-  const effectiveWindowSize = Math.min(WINDOW_SIZE, total);
-  const [windowStart, setWindowStart] = useState(0);
-  const [activePieceId, setActivePieceId] = useState(pieces[0]?.id ?? null);
-  const slidingRef = useRef(false);
-
-  const visible = pieces.slice(windowStart, windowStart + effectiveWindowSize);
-
-  useEffect(() => {
-    if (!visible.some((p) => p.id === activePieceId)) {
-      setActivePieceId(visible[0]?.id ?? null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [windowStart]);
-
-  function triggerSlide(direction) {
-    if (slidingRef.current) return;
-    slidingRef.current = true;
-    setWindowStart((start) => {
-      const next = start + direction;
-      return Math.max(0, Math.min(next, total - effectiveWindowSize));
-    });
-    setTimeout(() => {
-      slidingRef.current = false;
-    }, SLIDE_COOLDOWN_MS);
-  }
-
-  function handleHover(piece, indexInWindow) {
-    setActivePieceId(piece.id);
-    if (indexInWindow === 0 && windowStart > 0) {
-      triggerSlide(-1);
-    } else if (
-      indexInWindow >= effectiveWindowSize - 3 &&
-      windowStart + effectiveWindowSize < total
-    ) {
-      triggerSlide(1);
-    }
-  }
-
-  function handleRowLeave() {
-    setActivePieceId(visible[0]?.id ?? null);
-  }
-
-  return (
-    <div className="flex gap-2" style={{ height: 420 }} onMouseLeave={handleRowLeave}>
-      {visible.map((piece, i) => (
-        <AccordionPanel
-          key={piece.id}
-          piece={piece}
-          active={piece.id === activePieceId}
-          onMouseEnter={() => handleHover(piece, i)}
-          flexMode
-        />
-      ))}
-    </div>
-  );
-}
-
-// ---------- Touch (sm+): native horizontal scroll, proportional active index ----------
-function TouchScrollRow({ pieces }) {
+function AccordionRow({ pieces }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
   const tickingRef = useRef(false);
@@ -136,26 +62,29 @@ function TouchScrollRow({ pieces }) {
       style={{ height: 420, WebkitOverflowScrolling: "touch" }}
     >
       {pieces.map((piece, i) => (
-        <AccordionPanel key={piece.id} piece={piece} active={i === activeIndex} />
+        <AccordionPanel
+          key={piece.id}
+          piece={piece}
+          active={i === activeIndex}
+          onMouseEnter={() => setActiveIndex(i)}
+        />
       ))}
     </div>
   );
 }
 
-// ---------- Shared panel, used by both desktop hover row and touch scroll row ----------
-function AccordionPanel({ piece, active, onMouseEnter, flexMode }) {
+function AccordionPanel({ piece, active, onMouseEnter }) {
   return (
     <Link
       href={`/piece/${piece.id}`}
       onMouseEnter={onMouseEnter}
       style={{
         position: "relative",
-        ...(flexMode
-          ? { flex: active ? 3.2 : 1, minWidth: 0 }
-          : { width: active ? 380 : 90, flexShrink: 0 }),
+        width: active ? 380 : 90,
+        flexShrink: 0,
         overflow: "hidden",
         background: palette.wall,
-        transition: flexMode ? "flex 0.55s cubic-bezier(.2,.8,.2,1)" : "width 0.5s cubic-bezier(.2,.8,.2,1)",
+        transition: "width 0.5s cubic-bezier(.2,.8,.2,1)",
         textDecoration: "none",
         display: "block",
       }}
