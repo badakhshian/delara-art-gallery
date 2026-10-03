@@ -48,6 +48,9 @@ export default function Header() {
           <Link href="/artist" style={navLinkStyle}>
             Artist
           </Link>
+          <Link href="/timeline" style={navLinkStyle}>
+            Timeline
+          </Link>
           <Link href="/visit" style={navLinkStyle}>
             Visit
           </Link>
@@ -97,12 +100,16 @@ export default function Header() {
           <Link href="/collections" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
             Collection
           </Link>
-          <Link href="/artist" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
+          <Link href="/artist" style={navLinkStyle}>
             Artist
           </Link>
-          <Link href="/visit" style={navLinkStyle} onClick={() => setMenuOpen(false)}>
+          <Link href="/timeline" style={navLinkStyle}>
+            Timeline
+          </Link>
+          <Link href="/visit" style={navLinkStyle}>
             Visit
           </Link>
+
           <a
             href="mailto:Ahmadi.delara@gmail.com"
             style={{ color: palette.void, background: palette.brass, textDecoration: "none" }}
