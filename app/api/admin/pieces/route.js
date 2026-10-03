@@ -21,9 +21,11 @@ export async function POST(request) {
       story: body.story || "",
       sold: false,
       isHero: false,
+      onWall: body.onWall ?? true,
       certificateId: body.certificateId || "",
       collection: body.collection || "",
     };
+
 
     await addPiece(piece);
     return NextResponse.json({ ok: true, piece });
