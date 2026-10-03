@@ -105,22 +105,6 @@ export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
             <WallLabel piece={current} dark />
           </div>
         </div>
-
-        {pieces.length > 1 && (
-          <div className="absolute top-6 right-8 flex gap-2">
-            {pieces.map((p, i) => (
-              <div
-                key={p.id}
-                style={{
-                  width: 24,
-                  height: 2,
-                  background: i === index ? palette.brass : "rgba(232,227,216,0.3)",
-                  transition: "background 0.3s ease",
-                }}
-              />
-            ))}
-          </div>
-        )}
       </section>
     </Link>
   );
