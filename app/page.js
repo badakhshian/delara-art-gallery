@@ -14,12 +14,14 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const pieces = await getPieces();
+  const wallPieces = pieces.filter((p) => p.onWall !== false);
 
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
       <HeroCarousel pieces={pieces} intervalSeconds={6} />
+
 
       <section className="px-8 pb-4 pt-16" id="collection">
         <Reveal>
@@ -34,13 +36,14 @@ export default async function HomePage() {
               style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke }}
               className="text-xs uppercase"
             >
-              {String(pieces.length).padStart(2, "0")} works
+            {String(wallPieces.length).padStart(2, "0")} works
             </span>
           </div>
         </Reveal>
         <Reveal>
-          <WallAccordion pieces={pieces} />
+          <WallAccordion pieces={wallPieces} />
         </Reveal>
+
 
 
       </section>
