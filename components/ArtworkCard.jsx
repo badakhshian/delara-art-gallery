@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 import WallLabel from "./WallLabel";
 
 // Deterministic placeholder gradients for pieces without a photo yet, keyed
@@ -16,12 +17,13 @@ const FALLBACK_GRADIENTS = {
 };
 
 export default function ArtworkCard({ piece, tall }) {
+  const { t, href } = useI18n();
   const [hover, setHover] = useState(false);
   const image = piece.images?.[0];
 
   return (
     <Link
-      href={`/piece/${piece.id}`}
+      href={href(`/piece/${piece.id}`)}
       className="flex flex-col gap-3"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -39,7 +41,7 @@ export default function ArtworkCard({ piece, tall }) {
         {image && (
           <Image
             src={image}
-            alt={`${piece.title} by ${piece.artist}`}
+            alt={t.meta.imageAlt(piece.title)}
             fill
             sizes="(max-width: 640px) 50vw, 300px"
             style={{ objectFit: "cover" }}
@@ -62,7 +64,7 @@ export default function ArtworkCard({ piece, tall }) {
               letterSpacing: "0.1em",
             }}
           >
-            Sold
+            {t.sold}
           </div>
         )}
       </div>

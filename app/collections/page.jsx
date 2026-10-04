@@ -6,22 +6,28 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CollectionBanner from "@/components/CollectionBanner";
 import { pageMetadata } from "@/lib/seo";
+import { getI18n } from "@/lib/serverLang";
+import { localizeCollections, localizePieces } from "@/lib/localize";
 
-export const metadata = pageMetadata({
-  title: "Collections — Delara Art Gallery",
-  description:
-    "Browse Delara Ahmadi Darani's original artworks by collection — mixed-media paintings and sculpture, each a one-of-a-kind piece with a certificate of authenticity.",
-  path: "/collections",
-});
+export function generateMetadata() {
+  const { lang, t } = getI18n();
+  return pageMetadata({
+    title: t.meta.collectionsTitle,
+    description: t.meta.collectionsDescription,
+    path: "/collections",
+    lang,
+  });
+}
 
 export const dynamic = "force-dynamic";
 
 export default async function CollectionsPage() {
-  const collectionsList = await getCollections();
+  const { lang, t, href } = getI18n();
+  const collectionsList = localizeCollections(await getCollections(), lang);
   const orderedCollections = [...collectionsList].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   );
-  const pieces = await getPieces();
+  const pieces = localizePieces(await getPieces(), lang);
 
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
@@ -36,13 +42,13 @@ export default async function CollectionsPage() {
             letterSpacing: "0.12em",
           }}
         >
-          Collections
+          {t.collections.eyebrow}
         </div>
         <h1
           style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
           className="text-3xl"
         >
-          Every body of work, one at a time
+          {t.collections.title}
         </h1>
       </div>
 
@@ -60,7 +66,7 @@ export default async function CollectionsPage() {
                 {collection.name}
               </h2>
               <Link
-                href={`/collections/${collection.slug}`}
+                href={href(`/collections/${collection.slug}`)}
                 className="text-xs uppercase"
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
@@ -69,7 +75,7 @@ export default async function CollectionsPage() {
                   textDecoration: "none",
                 }}
               >
-                View full collection →
+                {t.collections.viewFull}
               </Link>
             </div>
 

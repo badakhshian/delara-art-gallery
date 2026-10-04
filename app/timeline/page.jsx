@@ -7,13 +7,18 @@ import { groupPiecesByYear, yearAnchor } from "@/lib/timeline";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { pageMetadata } from "@/lib/seo";
+import { getI18n } from "@/lib/serverLang";
+import { localizePieces } from "@/lib/localize";
 
-export const metadata = pageMetadata({
-  title: "Timeline — Delara Art Gallery",
-  description:
-    "Every original work by Delara Ahmadi Darani, year by year — follow how the work has moved through materials and ideas.",
-  path: "/timeline",
-});
+export function generateMetadata() {
+  const { lang, t } = getI18n();
+  return pageMetadata({
+    title: t.meta.timelineTitle,
+    description: t.meta.timelineDescription,
+    path: "/timeline",
+    lang,
+  });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +43,8 @@ function yearMedia(pieces) {
 // piece is listed with its medium, size, a story excerpt and price.
 // Pieces per row within each half: 1 on mobile and tablet, 2 on desktop.
 export default async function TimelinePage() {
-  const pieces = await getPieces();
+  const { lang, t } = getI18n();
+  const pieces = localizePieces(await getPieces(), lang);
   const { years, byYear } = groupPiecesByYear(pieces);
   const datedYears = years.filter((y) => y !== "Undated");
 
@@ -55,24 +61,25 @@ export default async function TimelinePage() {
             letterSpacing: "0.12em",
           }}
         >
-          Timeline
+          {t.timeline.eyebrow}
         </div>
         <h1
           style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
           className="text-3xl mb-4"
         >
-          Every piece, year by year
+          {t.timeline.title}
         </h1>
         {pieces.length > 0 && (
           <p
             className="text-sm max-w-xl mb-14 leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
           >
-            {pieces.length} {pieces.length === 1 ? "work" : "works"}
-            {datedYears.length > 1 &&
-              ` across ${datedYears.length} years, from ${datedYears[0]} to ${datedYears[datedYears.length - 1]}`}
-            . Follow the line to see how the work has moved through materials and ideas — select
-            any piece for its full story.
+            {t.timeline.intro(
+              pieces.length,
+              datedYears.length,
+              datedYears[0],
+              datedYears[datedYears.length - 1]
+            )}
           </p>
         )}
 
@@ -121,7 +128,7 @@ export default async function TimelinePage() {
             style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
             className="text-sm"
           >
-            No pieces yet.
+            {t.timeline.empty}
           </p>
         )}
       </div>
@@ -132,6 +139,7 @@ export default async function TimelinePage() {
 }
 
 function YearLabel({ year, pieces, align }) {
+  const { t } = getI18n();
   const media = yearMedia(pieces);
   return (
     <div className={align === "right" ? "text-right" : "text-left"}>
@@ -139,13 +147,13 @@ function YearLabel({ year, pieces, align }) {
         style={{ fontFamily: "'Fraunces', serif", color: palette.brass, fontWeight: 300 }}
         className="text-4xl sm:text-5xl leading-none"
       >
-        {year}
+        {year === "Undated" ? t.timeline.undated : year}
       </h2>
       <div
         style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke, letterSpacing: "0.08em" }}
         className="text-xs uppercase mt-2"
       >
-        {String(pieces.length).padStart(2, "0")} {pieces.length === 1 ? "piece" : "pieces"}
+        {t.pieces(pieces.length)}
       </div>
       {media.length > 0 && (
         <p
@@ -160,12 +168,13 @@ function YearLabel({ year, pieces, align }) {
 }
 
 function PieceCards({ pieces }) {
+  const { lang, t, href } = getI18n();
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-10">
       {pieces.map((piece) => (
         <Link
           key={piece.id}
-          href={`/piece/${piece.id}`}
+          href={href(`/piece/${piece.id}`)}
           className="block min-w-0"
           style={{ textDecoration: "none" }}
         >
@@ -193,7 +202,7 @@ function PieceCards({ pieces }) {
                   letterSpacing: "0.1em",
                 }}
               >
-                Sold
+                {t.sold}
               </div>
             )}
           </div>
@@ -227,7 +236,7 @@ function PieceCards({ pieces }) {
             style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.brass }}
             className="text-xs mt-2"
           >
-            {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+            {piece.sold ? t.sold : formatPrice(piece.priceCents, lang)}
           </div>
         </Link>
       ))}

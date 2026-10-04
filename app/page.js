@@ -8,26 +8,30 @@ import HeroCarousel from "@/components/HeroCarousel";
 import Reveal from "@/components/Reveal";
 import WallAccordion from "@/components/WallAccordion";
 import TimelinePanel from "@/components/TimelinePanel";
-import { SITE_NAME, pageMetadata, pieceImages } from "@/lib/seo";
+import { pageMetadata, pieceImages } from "@/lib/seo";
+import { getI18n } from "@/lib/serverLang";
+import { localizePieces } from "@/lib/localize";
 
 
 
 export async function generateMetadata() {
-  const pieces = await getPieces();
+  const { lang, t } = getI18n();
+  const pieces = localizePieces(await getPieces(), lang);
   const hero = pieces.find((p) => p.isHero) || pieces[0];
   return pageMetadata({
-    title: `${SITE_NAME} — Original works by Delara Ahmadi Darani`,
-    description:
-      "Original mixed-media works by Delara Ahmadi Darani — acrylic and modelling paste built up into raised, textured surfaces. Available directly from the studio, one piece at a time.",
+    title: t.meta.homeTitle,
+    description: t.meta.homeDescription,
     path: "/",
-    images: hero ? pieceImages(hero) : undefined,
+    lang,
+    images: hero ? pieceImages(hero, lang) : undefined,
   });
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const pieces = await getPieces();
+  const { lang, t, href } = getI18n();
+  const pieces = localizePieces(await getPieces(), lang);
   const wallPieces = pieces.filter((p) => p.onWall !== false);
 
   return (
@@ -44,13 +48,13 @@ export default async function HomePage() {
             style={{ borderBottom: `1px solid rgba(184,141,87,0.15)`, paddingBottom: 12 }}
           >
             <h2 style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 500 }} className="text-xl">
-              Currently on the wall
+              {t.home.onTheWall}
             </h2>
             <span
               style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke }}
               className="text-xs uppercase"
             >
-            {String(wallPieces.length).padStart(2, "0")} works
+              {t.works(wallPieces.length)}
             </span>
           </div>
         </Reveal>
@@ -75,8 +79,7 @@ export default async function HomePage() {
             style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
             className="text-2xl max-w-md leading-snug"
           >
-            Every piece ships with its provenance, condition report, and a certificate
-            of authenticity.
+            {t.home.provenance}
           </p>
         </Reveal>
         <Reveal delay={0.15}>
@@ -86,9 +89,9 @@ export default async function HomePage() {
           >
             <div>
               <div style={{ color: palette.brass }} className="text-base normal-case font-normal mb-1">
-                1 of 1
+                {t.home.oneOfOne}
               </div>
-              no editions, no prints
+              {t.home.noEditions}
             </div>
           </div>
         </Reveal>
@@ -101,10 +104,10 @@ export default async function HomePage() {
             style={{ borderBottom: `1px solid rgba(184,141,87,0.15)`, paddingBottom: 12 }}
           >
             <h2 style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 500 }} className="text-xl">
-              Through the years
+              {t.home.throughTheYears}
             </h2>
             <Link
-              href="/timeline"
+              href={href("/timeline")}
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",
                 color: palette.brass,
@@ -113,7 +116,7 @@ export default async function HomePage() {
               }}
               className="text-xs uppercase"
             >
-              Full timeline →
+              {t.home.fullTimeline}
             </Link>
           </div>
         </Reveal>
@@ -131,7 +134,7 @@ export default async function HomePage() {
             style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
             className="text-2xl mb-4"
           >
-            Explore the collections
+            {t.home.exploreTitle}
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
@@ -139,12 +142,12 @@ export default async function HomePage() {
             className="text-sm max-w-md mb-8"
             style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
           >
-            Every body of work, browsed one collection at a time.
+            {t.home.exploreText}
           </p>
         </Reveal>
         <Reveal delay={0.2}>
           <Link
-            href="/collections"
+            href={href("/collections")}
             className="text-xs uppercase px-6 py-3"
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
@@ -154,7 +157,7 @@ export default async function HomePage() {
               textDecoration: "none",
             }}
           >
-            View collections
+            {t.home.viewCollections}
           </Link>
         </Reveal>
       </section>

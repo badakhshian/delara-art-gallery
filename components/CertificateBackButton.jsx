@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 
 export default function CertificateBackButton({ pieceId }) {
+  const { t, href } = useI18n();
   const router = useRouter();
 
   function handleBack() {
@@ -15,7 +17,7 @@ export default function CertificateBackButton({ pieceId }) {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.push(`/piece/${pieceId}`);
+      router.push(href(`/piece/${pieceId}`));
     }
   }
 
@@ -34,7 +36,7 @@ export default function CertificateBackButton({ pieceId }) {
         cursor: "pointer",
       }}
     >
-      ← Back to piece
+      {t.certificate.back}
     </button>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 import WallLabel from "./WallLabel";
 
 const FALLBACK_GRADIENTS = {
@@ -14,6 +15,7 @@ const FALLBACK_GRADIENTS = {
 };
 
 export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
+  const { t, href } = useI18n();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
   const current = pieces[index];
 
   return (
-    <Link href={`/piece/${current.id}`}>
+    <Link href={href(`/piece/${current.id}`)}>
       <section data-hero className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
         <div className="absolute inset-0 overflow-hidden" style={{ background: palette.wall }}>
           {pieces.map((piece, i) => {
@@ -45,7 +47,7 @@ export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
                 {image && (
                   <Image
                     src={image}
-                    alt={`${piece.title} by ${piece.artist}`}
+                    alt={t.meta.imageAlt(piece.title)}
                     fill
                     priority={i === 0}
                     sizes="100vw"
@@ -93,9 +95,7 @@ export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
               className="mt-4 text-sm max-w-md"
               style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
             >
-              Original mixed-media works by Delara Ahmadi Darani — acrylic and
-              modelling paste built up into raised, textured surfaces. Available
-              directly from the studio, one piece at a time.
+              {t.home.heroTagline}
             </p>
           </div>
           <div

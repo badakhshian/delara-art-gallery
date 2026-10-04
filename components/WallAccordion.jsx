@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { formatPrice } from "@/lib/pieces";
+import { useI18n } from "@/components/LangProvider";
 
 export default function WallAccordion({ pieces }) {
   if (pieces.length === 0) return null;
@@ -135,9 +136,10 @@ function AccordionRow({ pieces }) {
 }
 
 function AccordionPanel({ piece, active, onMouseEnter }) {
+  const { lang, t, href } = useI18n();
   return (
     <Link
-      href={`/piece/${piece.id}`}
+      href={href(`/piece/${piece.id}`)}
       onMouseEnter={onMouseEnter}
       style={{
         position: "relative",
@@ -171,7 +173,7 @@ function AccordionPanel({ piece, active, onMouseEnter }) {
             zIndex: 2,
           }}
         >
-          Sold
+          {t.sold}
         </div>
       )}
 
@@ -204,7 +206,7 @@ function AccordionPanel({ piece, active, onMouseEnter }) {
             className="mt-1"
             style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.brass, fontSize: 12 }}
           >
-            {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+            {piece.sold ? t.sold : formatPrice(piece.priceCents, lang)}
           </div>
         </div>
       ) : (
@@ -283,9 +285,10 @@ function MobileAccordionStack({ pieces }) {
 }
 
 function MobileAccordionPanel({ piece, active }) {
+  const { lang, t, href } = useI18n();
   return (
     <Link
-      href={`/piece/${piece.id}`}
+      href={href(`/piece/${piece.id}`)}
       style={{
         position: "relative",
         display: "block",
@@ -310,7 +313,7 @@ function MobileAccordionPanel({ piece, active }) {
             zIndex: 2,
           }}
         >
-          Sold
+          {t.sold}
         </div>
       )}
       <div
@@ -341,7 +344,7 @@ function MobileAccordionPanel({ piece, active }) {
             className="mt-1"
             style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.brass, fontSize: 12 }}
           >
-            {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+            {piece.sold ? t.sold : formatPrice(piece.priceCents, lang)}
           </div>
         )}
       </div>

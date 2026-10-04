@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 
 // Horizontal scroll strip that also works with a plain mouse: prev/next
 // arrow buttons (shown only when there's more to scroll that way) and
@@ -91,11 +92,12 @@ export default function HorizontalScroller({ children, arrowTop = "50%" }) {
 }
 
 function ArrowButton({ direction, top, onClick }) {
+  const { t } = useI18n();
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={direction < 0 ? "Scroll back" : "Scroll forward"}
+      aria-label={direction < 0 ? t.home.scrollBack : t.home.scrollForward}
       className="absolute flex items-center justify-center rounded-full"
       style={{
         top,

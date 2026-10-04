@@ -13,6 +13,7 @@ export async function PUT(request) {
       name: body.name || "Delara Ahmadi Darani",
       photo: body.photo || "/images/delara-portrait.jpg",
       bio: body.bio,
+      bioFr: Array.isArray(body.bioFr) ? body.bioFr : [],
     };
 
     await saveArtist(artist);

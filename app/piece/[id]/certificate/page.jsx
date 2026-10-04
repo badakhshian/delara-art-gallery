@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getPiece } from "@/lib/piecesStore";
+import { getI18n } from "@/lib/serverLang";
+import { localizePiece } from "@/lib/localize";
 import { palette } from "@/lib/palette";
 import PieceQRCode from "@/components/PieceQRCode";
 import PrintButton from "@/components/PrintButton";
@@ -8,19 +10,22 @@ import CertificateBackButton from "@/components/CertificateBackButton";
 
 
 export async function generateMetadata({ params }) {
-  const piece = await getPiece(params.id);
+  const { lang, t } = getI18n();
+  const piece = localizePiece(await getPiece(params.id), lang);
   if (!piece) return {};
   // Kept out of search results — the piece page is the one that should rank.
-  return { title: `Certificate of Authenticity — ${piece.title}`, robots: { index: false } };
+  return { title: t.meta.certificateTitle(piece.title), robots: { index: false } };
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function CertificatePage({ params }) {
-  const piece = await getPiece(params.id);
+  const { lang, t } = getI18n();
+  const piece = localizePiece(await getPiece(params.id), lang);
   if (!piece) notFound();
+  const f = t.certificate.fields;
 
-  const issueDate = new Date().toLocaleDateString("en-US", {
+  const issueDate = new Date().toLocaleDateString(lang === "fr" ? "fr-CA" : "en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -87,30 +92,26 @@ export default async function CertificatePage({ params }) {
               fontSize: "1.75rem",
             }}
           >
-            Certificate of Authenticity
+            {t.certificate.title}
           </h1>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10 pb-2">
-          <Field label="Title" value={piece.title} bone />
-          <Field label="Artist" value={piece.artist} />
-          <Field label="Year" value={piece.year} />
-          <Field label="Medium" value={piece.medium} />
-          <Field label="Dimensions" value={piece.dims} />
-          <Field label="Edition" value="Original, one of one" />
-          <Field label="Certificate ID" value={piece.certificateId} />
-          <Field label="Date issued" value={issueDate} />
+          <Field label={f.title} value={piece.title} bone />
+          <Field label={f.artist} value={piece.artist} />
+          <Field label={f.year} value={piece.year} />
+          <Field label={f.medium} value={piece.medium} />
+          <Field label={f.dims} value={piece.dims} />
+          <Field label={f.edition} value={t.piece.originalOneOfOne} />
+          <Field label={f.id} value={piece.certificateId} />
+          <Field label={f.issued} value={issueDate} />
         </div>
 
         <p
           className="text-sm leading-relaxed mb-12"
           style={{ fontFamily: "'Inter', sans-serif", color: palette.bone }}
         >
-          This certifies that the work described above is an original,
-          one-of-a-kind piece created by Delara Ahmadi Darani. No editions,
-          reproductions, or prints of this piece have been authorized by the
-          artist. This certificate should remain with the artwork as part of
-          its provenance.
+          {t.certificate.statement}
         </p>
 
         <div className="signature-row flex items-end justify-between gap-6 flex-wrap">
@@ -130,7 +131,7 @@ export default async function CertificatePage({ params }) {
                 letterSpacing: "0.1em",
               }}
             >
-              Artist signature
+              {t.certificate.signature}
             </div>
           </div>
 

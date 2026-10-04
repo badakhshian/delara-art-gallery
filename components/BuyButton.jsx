@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 
 export default function BuyButton({ piece }) {
+  const { lang, t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -25,7 +27,7 @@ export default function BuyButton({ piece }) {
           cursor: "not-allowed",
         }}
       >
-        Sold
+        {t.sold}
       </button>
     );
   }
@@ -34,7 +36,7 @@ export default function BuyButton({ piece }) {
     return (
       <a
         href={`mailto:Ahmadi.delara@gmail.com?subject=${encodeURIComponent(
-          `Inquiry: ${piece.title}`
+          t.piece.inquirySubject(piece.title)
         )}`}
         className="text-xs uppercase px-5 py-3 inline-block"
         style={{
@@ -44,7 +46,7 @@ export default function BuyButton({ piece }) {
           textDecoration: "none",
         }}
       >
-        Inquire about this piece
+        {t.piece.inquireAbout}
       </a>
     );
   }
@@ -56,16 +58,16 @@ export default function BuyButton({ piece }) {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pieceId: piece.id }),
+        body: JSON.stringify({ pieceId: piece.id, lang }),
       });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.error || "Something went wrong. Please try again.");
+        setError(data.error || t.piece.error);
       }
     } catch (e) {
-      setError("Something went wrong. Please try again.");
+      setError(t.piece.error);
     } finally {
       setLoading(false);
     }
@@ -86,7 +88,7 @@ export default function BuyButton({ piece }) {
           opacity: loading ? 0.7 : 1,
         }}
       >
-        {loading ? "Redirecting…" : "Buy now"}
+        {loading ? t.piece.redirecting : t.piece.buyNow}
       </button>
       {error && (
         <p className="mt-2 text-xs" style={{ color: palette.oxblood, fontFamily: "'Inter', sans-serif" }}>

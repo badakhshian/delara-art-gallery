@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getPiece } from "@/lib/piecesStore";
+import { localizePiece } from "@/lib/localize";
+import { localizePath, normalizeLang } from "@/lib/i18n";
 
 // STRIPE_SECRET_KEY must be set in your environment (see .env.example).
 // Never expose this key on the client — this file only runs on the server.
@@ -10,18 +12,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 
 export async function POST(request) {
   try {
-    const { pieceId } = await request.json();
-    const piece = await getPiece(pieceId);
+    const body = await request.json();
+    const lang = normalizeLang(body.lang);
+    const fr = lang === "fr";
+    const piece = localizePiece(await getPiece(body.pieceId), lang);
 
     if (!piece) {
-      return NextResponse.json({ error: "Piece not found." }, { status: 404 });
+      return NextResponse.json({ error: fr ? "Œuvre introuvable." : "Piece not found." }, { status: 404 });
     }
     if (piece.sold) {
-      return NextResponse.json({ error: "This piece has already sold." }, { status: 409 });
+      return NextResponse.json(
+        { error: fr ? "Cette œuvre a déjà été vendue." : "This piece has already sold." },
+        { status: 409 }
+      );
     }
     if (piece.priceCents == null) {
       return NextResponse.json(
-        { error: "This piece doesn't have a price set yet." },
+        { error: fr ? "Le prix de cette œuvre n’est pas encore fixé." : "This piece doesn't have a price set yet." },
         { status: 400 }
       );
     }
@@ -40,8 +47,12 @@ export async function POST(request) {
         : `${origin}${image}`
       : null;
 
+    const piecePath = localizePath(lang, `/piece/${piece.id}`);
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      // Stripe's own checkout page in the buyer's language.
+      locale: fr ? "fr-CA" : "en",
       line_items: [
         {
           price_data: {
@@ -65,9 +76,9 @@ export async function POST(request) {
       invoice_creation: {
         enabled: true,
       },
-      metadata: { pieceId: piece.id },
-      success_url: `${origin}/piece/${piece.id}?purchase=success`,
-      cancel_url: `${origin}/piece/${piece.id}?purchase=cancelled`,
+      metadata: { pieceId: piece.id, lang },
+      success_url: `${origin}${piecePath}?purchase=success`,
+      cancel_url: `${origin}${piecePath}?purchase=cancelled`,
     });
 
     return NextResponse.json({ url: session.url });

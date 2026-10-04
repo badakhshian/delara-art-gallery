@@ -6,26 +6,31 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 import { pageMetadata, pieceImages } from "@/lib/seo";
+import { getI18n } from "@/lib/serverLang";
+import { localizeCollection, localizePieces } from "@/lib/localize";
 
 export async function generateMetadata({ params }) {
-  const collection = await getCollection(params.slug);
+  const { lang, t } = getI18n();
+  const collection = localizeCollection(await getCollection(params.slug), lang);
   if (!collection) return {};
-  const pieces = (await getPieces()).filter((p) => p.collection === collection.slug);
+  const pieces = localizePieces(await getPieces(), lang).filter((p) => p.collection === collection.slug);
   return pageMetadata({
     title: `${collection.name} — Delara Art Gallery`,
-    description: `${collection.name}: ${pieces.length} original ${pieces.length === 1 ? "work" : "works"} by Delara Ahmadi Darani, available directly from the studio.`,
+    description: t.meta.collectionDescription(collection.name, pieces.length),
     path: `/collections/${collection.slug}`,
-    images: pieces[0] ? pieceImages(pieces[0]).slice(0, 1) : undefined,
+    lang,
+    images: pieces[0] ? pieceImages(pieces[0], lang).slice(0, 1) : undefined,
   });
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function CollectionPage({ params }) {
-  const collection = await getCollection(params.slug);
+  const { lang, t } = getI18n();
+  const collection = localizeCollection(await getCollection(params.slug), lang);
   if (!collection) notFound();
 
-  const pieces = await getPieces();
+  const pieces = localizePieces(await getPieces(), lang);
   const collectionPieces = pieces.filter((p) => p.collection === collection.slug);
 
   return (
@@ -42,7 +47,7 @@ export default async function CollectionPage({ params }) {
             letterSpacing: "0.12em",
           }}
         >
-          Collection
+          {t.collections.collection}
         </div>
         <h1
           style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
@@ -56,7 +61,7 @@ export default async function CollectionPage({ params }) {
             className="text-sm"
             style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
           >
-            No pieces in this collection yet.
+            {t.collections.empty}
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-10">

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
+import FrenchPieceFields from "@/components/admin/FrenchPieceFields";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -41,8 +42,10 @@ export default function NewPiecePage() {
   const [collectionsList, setCollectionsList] = useState([]);
   const [collection, setCollection] = useState("");
   const [newCollectionName, setNewCollectionName] = useState("");
+  const [newCollectionNameFr, setNewCollectionNameFr] = useState("");
   const [certificateId, setCertificateId] = useState("");
   const [story, setStory] = useState("");
+  const [french, setFrench] = useState({ titleFr: "", mediumFr: "", dimsFr: "", storyFr: "" });
   const [onWall, setOnWall] = useState(true);
   const [files, setFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -74,7 +77,7 @@ export default function NewPiecePage() {
         const res = await fetch("/api/admin/collections", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: newCollectionName }),
+          body: JSON.stringify({ name: newCollectionName, nameFr: newCollectionNameFr }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not create the collection.");
@@ -108,6 +111,7 @@ export default function NewPiecePage() {
           collection: collectionSlug,
           certificateId,
           story,
+          ...french,
           onWall,
         }),
       });
@@ -227,6 +231,14 @@ export default function NewPiecePage() {
                 onChange={(e) => setNewCollectionName(e.target.value)}
                 style={inputStyle}
               />
+              <input
+                type="text"
+                lang="fr"
+                placeholder="Nom en français (optional)"
+                value={newCollectionNameFr}
+                onChange={(e) => setNewCollectionNameFr(e.target.value)}
+                style={{ ...inputStyle, marginTop: 8 }}
+              />
             </div>
           )}
 
@@ -254,6 +266,13 @@ export default function NewPiecePage() {
               style={{ ...inputStyle, resize: "vertical" }}
             />
           </div>
+
+          <FrenchPieceFields
+            values={french}
+            onChange={(key, value) => setFrench((f) => ({ ...f, [key]: value }))}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
             <label className="flex items-center gap-2 text-xs uppercase" style={labelStyle}>
             <input type="checkbox" checked={onWall} onChange={(e) => setOnWall(e.target.checked)} />

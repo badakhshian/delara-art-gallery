@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
+import { localizePiece } from "@/lib/localize";
+import FrenchPieceFields from "@/components/admin/FrenchPieceFields";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -36,8 +38,21 @@ export default function EditPieceForm({ piece }) {
   const [collectionsList, setCollectionsList] = useState([]);
   const [collection, setCollection] = useState(piece.collection || "");
   const [newCollectionName, setNewCollectionName] = useState("");
+  const [newCollectionNameFr, setNewCollectionNameFr] = useState("");
   const [certificateId, setCertificateId] = useState(piece.certificateId || "");
   const [story, setStory] = useState(piece.story || "");
+  // Prefilled with what the French site currently shows (the saved French,
+  // or the built-in translation), so it can be reviewed and corrected.
+  const [french, setFrench] = useState(() => {
+    const fr = localizePiece(piece, "fr");
+    const val = (key, field) => piece[key] || (fr[field] !== piece[field] ? fr[field] : "");
+    return {
+      titleFr: val("titleFr", "title"),
+      mediumFr: val("mediumFr", "medium"),
+      dimsFr: val("dimsFr", "dims"),
+      storyFr: val("storyFr", "story"),
+    };
+  });
   const [sold, setSold] = useState(!!piece.sold);
   const [onWall, setOnWall] = useState(piece.onWall !== false);
   const [existingImages, setExistingImages] = useState(piece.images || []);
@@ -71,7 +86,7 @@ export default function EditPieceForm({ piece }) {
         const res = await fetch("/api/admin/collections", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: newCollectionName }),
+          body: JSON.stringify({ name: newCollectionName, nameFr: newCollectionNameFr }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not create the collection.");
@@ -105,6 +120,7 @@ export default function EditPieceForm({ piece }) {
           collection: collectionSlug,
           certificateId,
           story,
+          ...french,
           sold,
           onWall,
         }),
@@ -223,6 +239,14 @@ export default function EditPieceForm({ piece }) {
                 onChange={(e) => setNewCollectionName(e.target.value)}
                 style={inputStyle}
               />
+              <input
+                type="text"
+                lang="fr"
+                placeholder="Nom en français (optional)"
+                value={newCollectionNameFr}
+                onChange={(e) => setNewCollectionNameFr(e.target.value)}
+                style={{ ...inputStyle, marginTop: 8 }}
+              />
             </div>
           )}
 
@@ -249,6 +273,13 @@ export default function EditPieceForm({ piece }) {
               style={{ ...inputStyle, resize: "vertical" }}
             />
           </div>
+
+          <FrenchPieceFields
+            values={french}
+            onChange={(key, value) => setFrench((f) => ({ ...f, [key]: value }))}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
           <label className="flex items-center gap-2 text-xs uppercase" style={labelStyle}>
             <input type="checkbox" checked={sold} onChange={(e) => setSold(e.target.checked)} />

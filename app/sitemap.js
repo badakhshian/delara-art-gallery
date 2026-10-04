@@ -1,6 +1,7 @@
 import { getPieces } from "@/lib/piecesStore";
 import { getCollections } from "@/lib/collectionsStore";
 import { absoluteUrl } from "@/lib/seo";
+import { localizePath } from "@/lib/i18n";
 
 // Generated on each request so new pieces and collections from the admin
 // appear in /sitemap.xml straight away.
@@ -29,5 +30,17 @@ export default async function sitemap() {
     priority: p.sold ? 0.5 : 0.8,
   }));
 
-  return [...pages, ...collectionPages, ...piecePages];
+  // Each page in English and French, each listing the other as its
+  // language alternate.
+  return [...pages, ...collectionPages, ...piecePages].flatMap((entry) => {
+    const path = new URL(entry.url).pathname;
+    const languages = {
+      en: absoluteUrl(path),
+      fr: absoluteUrl(localizePath("fr", path)),
+    };
+    return [
+      { ...entry, alternates: { languages } },
+      { ...entry, url: languages.fr, alternates: { languages } },
+    ];
+  });
 }

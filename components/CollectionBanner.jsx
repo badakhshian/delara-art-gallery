@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 import WallLabel from "./WallLabel";
 
 const FALLBACK_GRADIENTS = {
@@ -14,6 +15,7 @@ const FALLBACK_GRADIENTS = {
 };
 
 export default function CollectionBanner({ pieces, intervalSeconds = 5 }) {
+  const { t, href } = useI18n();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function CollectionBanner({ pieces, intervalSeconds = 5 }) {
   const current = pieces[index];
 
   return (
-    <Link href={`/piece/${current.id}`}>
+    <Link href={href(`/piece/${current.id}`)}>
       <div
         className="relative w-full cursor-pointer overflow-hidden"
         style={{ height: "62vh", minHeight: 420, background: palette.wall }}
@@ -49,7 +51,7 @@ export default function CollectionBanner({ pieces, intervalSeconds = 5 }) {
               {image && (
                 <Image
                   src={image}
-                  alt={`${piece.title} by ${piece.artist}`}
+                  alt={t.meta.imageAlt(piece.title)}
                   fill
                   priority={i === 0}
                   sizes="100vw"

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
+import { localizeArtist } from "@/lib/localize";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -26,6 +27,11 @@ export default function EditArtistForm({ artist }) {
   const router = useRouter();
   const [name, setName] = useState(artist.name || "");
   const [bioText, setBioText] = useState((artist.bio || []).join("\n\n"));
+  // Prefilled with what the French site currently shows, for review.
+  const [bioFrText, setBioFrText] = useState(() => {
+    const frBio = localizeArtist(artist, "fr").bio || [];
+    return frBio.join("\n") === (artist.bio || []).join("\n") ? "" : frBio.join("\n\n");
+  });
   const [photo, setPhoto] = useState(artist.photo || "");
   const [newFile, setNewFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -56,10 +62,15 @@ export default function EditArtistForm({ artist }) {
         .map((p) => p.trim())
         .filter(Boolean);
 
+      const bioFr = bioFrText
+        .split(/\n\s*\n/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+
       const res = await fetch("/api/admin/artist", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, bio, photo: photoUrl }),
+        body: JSON.stringify({ name, bio, bioFr, photo: photoUrl }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not save changes.");
@@ -98,6 +109,19 @@ export default function EditArtistForm({ artist }) {
           rows={12}
           value={bioText}
           onChange={(e) => setBioText(e.target.value)}
+          style={{ ...inputStyle, resize: "vertical" }}
+        />
+      </div>
+
+      <div>
+        <label className="text-xs uppercase block mb-2" style={labelStyle}>
+          Biographie en français — French site (leave empty to show the English)
+        </label>
+        <textarea
+          rows={12}
+          lang="fr"
+          value={bioFrText}
+          onChange={(e) => setBioFrText(e.target.value)}
           style={{ ...inputStyle, resize: "vertical" }}
         />
       </div>

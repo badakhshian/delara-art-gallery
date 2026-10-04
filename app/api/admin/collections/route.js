@@ -19,6 +19,7 @@ export async function POST(request) {
     const collection = {
       slug: slugify(body.name),
       name: body.name.trim(),
+      nameFr: (body.nameFr || "").trim(),
       date: new Date().toISOString().slice(0, 10),
     };
 

@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { palette } from "@/lib/palette";
 import SocialLinks from "./SocialLinks";
+import { useI18n } from "@/components/LangProvider";
 
 export default function Footer() {
+  const { t } = useI18n();
   return (
     <footer
       className="px-8 py-12"
@@ -13,7 +17,7 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <Image
               src="/images/logo-gold.png"
-              alt="Delara Ahmadi Darani monogram"
+              alt={t.footer.monogram}
               width={140}
               height={75}
               style={{ height: 38, width: "auto" }}
@@ -28,7 +32,7 @@ export default function Footer() {
             style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke }}
             className="text-xs mt-2"
           >
-            Viewings by appointment · Est. 2003
+            {t.footer.tagline}
           </div>
         </div>
 
@@ -37,7 +41,7 @@ export default function Footer() {
           className="text-xs uppercase tracking-wide"
         >
           <div className="mb-2" style={{ color: palette.brass, letterSpacing: "0.1em" }}>
-            Contact
+            {t.footer.contact}
           </div>
           <div className="normal-case" style={{ color: palette.bone }}>
             Delara Ahmadi Darani
@@ -67,7 +71,7 @@ export default function Footer() {
           borderTop: `1px solid rgba(184,141,87,0.1)`,
         }}
       >
-        © {new Date().getFullYear()} Delara Art Gallery. All rights reserved.
+        {t.footer.rights(new Date().getFullYear())}
       </div>
     </footer>
   );

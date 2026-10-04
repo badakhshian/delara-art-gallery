@@ -4,6 +4,8 @@ import PageTransition from "@/components/PageTransition";
 import CustomCursor from "@/components/CustomCursor";
 import { SITE_URL } from "@/lib/site";
 import { SITE_NAME } from "@/lib/seo";
+import { getLang } from "@/lib/serverLang";
+import { LangProvider } from "@/components/LangProvider";
 
 const DESCRIPTION =
   "Original mixed-media works by Delara Ahmadi Darani — acrylic and modelling paste built up into raised, textured surfaces. One piece at a time.";
@@ -31,11 +33,14 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const lang = getLang();
   return (
-    <html lang="en">
+    <html lang={lang}>
       <body>
         <CustomCursor />
-        <PageTransition>{children}</PageTransition>
+        <LangProvider lang={lang}>
+          <PageTransition>{children}</PageTransition>
+        </LangProvider>
         <Analytics />
       </body>
     </html>

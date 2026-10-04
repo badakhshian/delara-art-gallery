@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { formatPrice } from "@/lib/pieces";
 import { getPiece } from "@/lib/piecesStore";
+import { getCollection } from "@/lib/collectionsStore";
+import { getI18n } from "@/lib/serverLang";
+import { localizeCollection, localizePiece } from "@/lib/localize";
 import { splitStoryIntoChunks } from "@/lib/storySections";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
@@ -12,13 +15,15 @@ import BackButton from "@/components/BackButton";
 import { ARTIST_NAME, JsonLd, pageMetadata, pieceDescription, pieceImages, pieceJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
-  const piece = await getPiece(params.id);
+  const { lang } = getI18n();
+  const piece = localizePiece(await getPiece(params.id), lang);
   if (!piece) return {};
   return pageMetadata({
     title: `${piece.title} — ${ARTIST_NAME}`,
-    description: pieceDescription(piece),
+    description: pieceDescription(piece, lang),
     path: `/piece/${piece.id}`,
-    images: pieceImages(piece),
+    lang,
+    images: pieceImages(piece, lang),
   });
 }
 
@@ -28,8 +33,12 @@ const ZOOM_POSITIONS = ["30% 20%", "70% 65%", "50% 90%", "20% 70%"];
 
 
 export default async function PieceDetailPage({ params, searchParams }) {
-  const piece = await getPiece(params.id);
+  const { lang, t, href } = getI18n();
+  const piece = localizePiece(await getPiece(params.id), lang);
   if (!piece) notFound();
+  const collection = piece.collection
+    ? localizeCollection(await getCollection(piece.collection), lang)
+    : null;
 
   const purchaseStatus = searchParams?.purchase;
 
@@ -62,7 +71,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
     
         <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
-      <JsonLd data={pieceJsonLd(piece)} />
+      <JsonLd data={pieceJsonLd(piece, lang)} />
 
       <SoldStatusRefresher active={purchaseStatus === "success" && !piece.sold} />
 
@@ -85,8 +94,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
               fontWeight: 500,
             }}
           >
-            ✓ PURCHASE CONFIRMED — thank you. A receipt has been sent to your email,
-            and Delara will be in touch about delivery.
+            {t.piece.purchaseConfirmed}
           </p>
         </div>
       )}
@@ -97,7 +105,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
         {hero ? (
           <img
             src={hero}
-            alt={`${piece.title} by ${piece.artist}`}
+            alt={t.meta.imageAlt(piece.title)}
             style={{ width: "100%", height: "auto", display: "block" }}
           />
         ) : (
@@ -128,7 +136,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
               marginBottom: 10,
             }}
           >
-            {piece.collection || "Delara Art Gallery"}
+            {collection?.name || piece.collection || "Delara Art Gallery"}
           </div>
           <h1
             style={{
@@ -178,7 +186,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
                 <div style={{ width: "100%", height: "62vh", minHeight: 340, overflow: "hidden" }}>
                   <img
                     src={breakPhotos[i].src}
-                    alt={`${piece.title} detail`}
+                    alt={`${piece.title} ${t.piece.detail}`}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -192,7 +200,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
               ) : (
                 <img
                   src={breakPhotos[i].src}
-                  alt={`${piece.title} detail`}
+                  alt={`${piece.title} ${t.piece.detail}`}
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
               )}
@@ -205,7 +213,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
         <img
           key={i}
           src={photo.src}
-          alt={`${piece.title} view ${i + 1}`}
+          alt={`${piece.title} ${t.piece.view(i + 1)}`}
           style={{ width: "100%", height: "auto", display: "block" }}
         />
       ))}
@@ -220,7 +228,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
             marginBottom: 28,
           }}
         >
-          <span style={{ color: palette.bone }}>{piece.artist}</span>, {piece.year} · Original, one of one
+          <span style={{ color: palette.bone }}>{piece.artist}</span>, {piece.year} · {t.piece.originalOneOfOne}
         </div>
         <div
           style={{
@@ -233,7 +241,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
         >
           <PieceQRCode piece={piece} size={64} />
           <a
-            href={`/piece/${piece.id}/certificate`}
+            href={href(`/piece/${piece.id}/certificate`)}
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11,
@@ -243,7 +251,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
               textDecoration: "none",
             }}
           >
-            View certificate
+            {t.piece.viewCertificate}
           </a>
         </div>
       </div>
@@ -279,9 +287,9 @@ export default async function PieceDetailPage({ params, searchParams }) {
               marginBottom: 2,
             }}
           >
-            Price
+            {t.piece.price}
           </span>
-          {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+          {piece.sold ? t.sold : formatPrice(piece.priceCents, lang)}
         </div>
         <BuyButton piece={piece} />
       </div>

@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 
 export default function BackButton() {
+  const { t, href } = useI18n();
   const router = useRouter();
 
   function handleBack() {
@@ -14,7 +16,7 @@ export default function BackButton() {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.push("/");
+      router.push(href("/"));
     }
   }
 
@@ -39,7 +41,7 @@ export default function BackButton() {
         cursor: "pointer",
       }}
     >
-      ← Back
+      {t.piece.back}
     </button>
   );
 }

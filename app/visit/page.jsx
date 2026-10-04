@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
+import { useI18n } from "@/components/LangProvider";
 import Footer from "@/components/Footer";
 
 const inputStyle = {
@@ -22,6 +23,8 @@ const labelStyle = {
 };
 
 export default function VisitPage() {
+  const { lang, t } = useI18n();
+  const v = t.visit;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -33,11 +36,11 @@ export default function VisitPage() {
   const [pieces, setPieces] = useState([]);
 
   useEffect(() => {
-    fetch("/api/pieces")
+    fetch(`/api/pieces?lang=${lang}`)
       .then((res) => res.json())
       .then((data) => setPieces(data.pieces || []))
       .catch(() => setPieces([]));
-  }, []);
+  }, [lang]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -54,14 +57,14 @@ export default function VisitPage() {
 
       if (!res.ok) {
         setStatus("error");
-        setErrorMessage(data.error || "Something went wrong. Please try again.");
+        setErrorMessage(data.error || v.error);
         return;
       }
 
       setStatus("sent");
     } catch (err) {
       setStatus("error");
-      setErrorMessage("Something went wrong. Please try again.");
+      setErrorMessage(v.error);
     }
   }
 
@@ -74,7 +77,7 @@ export default function VisitPage() {
             className="text-xs uppercase mb-3"
             style={{ ...labelStyle, color: palette.brass }}
           >
-            Visit
+            {v.eyebrow}
           </div>
           <h1
             style={{
@@ -84,14 +87,13 @@ export default function VisitPage() {
               fontSize: "2rem",
             }}
           >
-            Request sent
+            {v.sentTitle}
           </h1>
           <p
             className="mt-4 text-sm leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
           >
-            Thank you — your viewing request has been sent. You'll hear back
-            directly to confirm a time.
+            {v.sentText}
           </p>
         </div>
         <Footer />
@@ -108,7 +110,7 @@ export default function VisitPage() {
           className="text-xs uppercase mb-3"
           style={{ ...labelStyle, color: palette.brass }}
         >
-          Visit
+          {v.eyebrow}
         </div>
         <h1
           style={{
@@ -118,20 +120,19 @@ export default function VisitPage() {
             fontSize: "2rem",
           }}
         >
-          Request a viewing
+          {v.title}
         </h1>
         <p
           className="mt-4 text-sm leading-relaxed"
           style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
         >
-          Viewings are by appointment. Fill in a few details below and the
-          request is sent directly — no email app needed.
+          {v.intro}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-6">
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Name
+              {v.name}
             </label>
             <input
               type="text"
@@ -144,7 +145,7 @@ export default function VisitPage() {
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Email
+              {v.email}
             </label>
             <input
               type="email"
@@ -157,7 +158,7 @@ export default function VisitPage() {
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Phone (optional)
+              {v.phone}
             </label>
             <input
               type="tel"
@@ -169,14 +170,14 @@ export default function VisitPage() {
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Which piece would you like to see?
+              {v.whichPiece}
             </label>
             <select
               value={pieceId}
               onChange={(e) => setPieceId(e.target.value)}
               style={{ ...inputStyle, appearance: "auto" }}
             >
-              <option value="">No specific piece — general visit</option>
+              <option value="">{v.noPiece}</option>
               {pieces.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.title}
@@ -187,11 +188,11 @@ export default function VisitPage() {
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Preferred date / time (optional)
+              {v.preferredTime}
             </label>
             <input
               type="text"
-              placeholder="e.g. weekday afternoons"
+              placeholder={v.preferredPlaceholder}
               value={preferredTime}
               onChange={(e) => setPreferredTime(e.target.value)}
               style={inputStyle}
@@ -200,7 +201,7 @@ export default function VisitPage() {
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Message (optional)
+              {v.message}
             </label>
             <textarea
               rows={4}
@@ -224,7 +225,7 @@ export default function VisitPage() {
               opacity: status === "sending" ? 0.7 : 1,
             }}
           >
-            {status === "sending" ? "Sending…" : "Send request"}
+            {status === "sending" ? v.sending : v.send}
           </button>
 
           {status === "error" && (

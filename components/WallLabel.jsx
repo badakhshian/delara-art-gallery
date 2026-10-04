@@ -1,7 +1,11 @@
+"use client";
+
 import { palette } from "@/lib/palette";
 import { formatPrice } from "@/lib/pieces";
+import { useI18n } from "@/components/LangProvider";
 
 export default function WallLabel({ piece, dark = true }) {
+  const { lang, t } = useI18n();
   return (
     <div
       style={{
@@ -20,7 +24,7 @@ export default function WallLabel({ piece, dark = true }) {
         {piece.medium} · {piece.dims}
       </div>
       <div className="mt-1" style={{ color: dark ? palette.bone : palette.wall }}>
-        {piece.sold ? "Sold" : formatPrice(piece.priceCents)}
+        {piece.sold ? t.sold : formatPrice(piece.priceCents, lang)}
       </div>
     </div>
   );

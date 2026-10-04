@@ -1,12 +1,16 @@
 import { pageMetadata } from "@/lib/seo";
+import { getI18n } from "@/lib/serverLang";
 
 // The visit page is a client component, so its metadata lives here.
-export const metadata = pageMetadata({
-  title: "Visit the Studio — Delara Art Gallery",
-  description:
-    "Request a private viewing of Delara Ahmadi Darani's original artworks. Viewings by appointment.",
-  path: "/visit",
-});
+export function generateMetadata() {
+  const { lang, t } = getI18n();
+  return pageMetadata({
+    title: t.meta.visitTitle,
+    description: t.meta.visitDescription,
+    path: "/visit",
+    lang,
+  });
+}
 
 export default function VisitLayout({ children }) {
   return children;

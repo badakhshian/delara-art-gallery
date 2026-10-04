@@ -2,10 +2,12 @@
 
 import { QRCodeSVG } from "qrcode.react";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 import { SITE_URL } from "@/lib/site";
 
 export default function PieceQRCode({ piece, size = 96 }) {
-  const url = `${SITE_URL}/piece/${piece.id}?verify=${piece.certificateId}`;
+  const { t, href } = useI18n();
+  const url = `${SITE_URL}${href(`/piece/${piece.id}`)}?verify=${piece.certificateId}`;
 
   return (
     <div className="flex items-center gap-3">
@@ -17,7 +19,7 @@ export default function PieceQRCode({ piece, size = 96 }) {
         className="text-[11px] leading-relaxed"
       >
         <div className="uppercase" style={{ letterSpacing: "0.08em" }}>
-          Scan to verify
+          {t.piece.scanToVerify}
         </div>
         <div style={{ color: palette.brass }}>{piece.certificateId}</div>
       </div>

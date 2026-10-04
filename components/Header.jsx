@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
+import LanguageSwitch from "@/components/LanguageSwitch";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/collections", label: "Collection" },
-  { href: "/artist", label: "Artist" },
-  { href: "/timeline", label: "Timeline" },
-  { href: "/visit", label: "Visit" },
+  { href: "/", key: "home" },
+  { href: "/collections", key: "collection" },
+  { href: "/artist", key: "artist" },
+  { href: "/timeline", key: "timeline" },
+  { href: "/visit", key: "visit" },
 ];
 
 const navStyle = {
@@ -31,6 +33,7 @@ const HIDE_RANGE = 250;
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t, href } = useI18n();
   // 0 = fully shown, 1 = fully hidden.
   const [hideProgress, setHideProgress] = useState(0);
   const headerRef = useRef(null);
@@ -100,7 +103,7 @@ export default function Header() {
       />
 
       <div className="relative flex items-center justify-between px-8 py-3">
-        <Link href="/" className="flex items-center gap-3" onClick={closeMenu}>
+        <Link href={href("/")} className="flex items-center gap-3" onClick={closeMenu}>
           <Image
             src="/images/logo-gold.png"
             alt="Delara Ahmadi Darani — Delara Art Gallery"
@@ -111,15 +114,16 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="hidden sm:flex gap-6 lg:gap-8 text-[13px] uppercase" style={navStyle}>
+        <nav className="hidden sm:flex gap-4 lg:gap-8 text-[12px] lg:text-[13px] uppercase" style={navStyle}>
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} style={navLinkStyle} className="hover:opacity-75">
-              {link.label}
+            <Link key={link.href} href={href(link.href)} style={navLinkStyle} className="hover:opacity-75">
+              {t.nav[link.key]}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 lg:gap-5">
+          <LanguageSwitch />
           <a
             href="mailto:Ahmadi.delara@gmail.com"
             className="hidden sm:inline-block text-xs uppercase px-4 py-2"
@@ -132,12 +136,12 @@ export default function Header() {
               textDecoration: "none",
             }}
           >
-            Inquire
+            {t.inquire}
           </a>
 
           <button
             onClick={() => setMenuOpen((open) => !open)}
-            aria-label="Toggle menu"
+            aria-label={t.toggleMenu}
             className="sm:hidden flex flex-col justify-center gap-1.5"
             style={{ width: 28, height: 28, background: "none", border: "none", cursor: "pointer" }}
           >
@@ -157,8 +161,8 @@ export default function Header() {
           }}
         >
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} style={navLinkStyle} onClick={closeMenu}>
-              {link.label}
+            <Link key={link.href} href={href(link.href)} style={navLinkStyle} onClick={closeMenu}>
+              {t.nav[link.key]}
             </Link>
           ))}
 
@@ -167,7 +171,7 @@ export default function Header() {
             style={{ color: palette.void, background: palette.brass, textDecoration: "none", textShadow: "none" }}
             className="px-4 py-2 inline-block w-fit"
           >
-            Inquire
+            {t.inquire}
           </a>
         </nav>
       )}

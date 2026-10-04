@@ -1,8 +1,10 @@
 "use client";
 
 import { palette } from "@/lib/palette";
+import { useI18n } from "@/components/LangProvider";
 
 export default function PrintButton() {
+  const { t } = useI18n();
   return (
     <button
       onClick={() => window.print()}
@@ -16,7 +18,7 @@ export default function PrintButton() {
         cursor: "pointer",
       }}
     >
-      Print / Save as PDF
+      {t.certificate.print}
     </button>
   );
 }

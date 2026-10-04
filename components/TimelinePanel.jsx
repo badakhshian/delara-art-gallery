@@ -3,6 +3,7 @@ import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { groupPiecesByYear, yearAnchor } from "@/lib/timeline";
 import HorizontalScroller from "@/components/HorizontalScroller";
+import { getI18n } from "@/lib/serverLang";
 
 // How many thumbnails each year shows before collapsing into "+N more".
 const THUMBS_PER_YEAR = 3;
@@ -122,6 +123,7 @@ function VerticalTimeline({ years, byYear }) {
 }
 
 function MobileThumbs({ year, pieces, towardLine }) {
+  const { t, href } = getI18n();
   const shown = pieces.slice(0, THUMBS_PER_YEAR);
   const extra = pieces.length - shown.length;
 
@@ -132,7 +134,7 @@ function MobileThumbs({ year, pieces, towardLine }) {
       {shown.map((piece) => (
         <Link
           key={piece.id}
-          href={`/piece/${piece.id}`}
+          href={href(`/piece/${piece.id}`)}
           dir="ltr"
           className="block min-w-0"
           style={{ textDecoration: "none" }}
@@ -153,7 +155,7 @@ function MobileThumbs({ year, pieces, towardLine }) {
 
       {extra > 0 && (
         <Link
-          href={`/timeline#${yearAnchor(year)}`}
+          href={href(`/timeline#${yearAnchor(year)}`)}
           dir="ltr"
           className="flex items-center justify-center text-xs uppercase"
           style={{
@@ -173,25 +175,27 @@ function MobileThumbs({ year, pieces, towardLine }) {
 }
 
 function YearLabel({ year, count }) {
+  const { t, href } = getI18n();
   return (
-    <Link href={`/timeline#${yearAnchor(year)}`} style={{ textDecoration: "none" }}>
+    <Link href={href(`/timeline#${yearAnchor(year)}`)} style={{ textDecoration: "none" }}>
       <div
         style={{ fontFamily: "'Fraunces', serif", color: palette.brass, fontWeight: 300 }}
         className="text-3xl"
       >
-        {year}
+        {year === "Undated" ? t.timeline.undated : year}
       </div>
       <div
         style={{ fontFamily: "'IBM Plex Mono', monospace", color: palette.smoke }}
         className="text-xs uppercase mt-1"
       >
-        {String(count).padStart(2, "0")} {count === 1 ? "piece" : "pieces"}
+        {t.pieces(count)}
       </div>
     </Link>
   );
 }
 
 function YearThumbs({ year, pieces }) {
+  const { t, href } = getI18n();
   const shown = pieces.slice(0, THUMBS_PER_YEAR);
   const extra = pieces.length - shown.length;
 
@@ -200,7 +204,7 @@ function YearThumbs({ year, pieces }) {
       {shown.map((piece) => (
         <Link
           key={piece.id}
-          href={`/piece/${piece.id}`}
+          href={href(`/piece/${piece.id}`)}
           className="block"
           title={piece.title}
           style={{ textDecoration: "none" }}
@@ -236,7 +240,7 @@ function YearThumbs({ year, pieces }) {
 
       {extra > 0 && (
         <Link
-          href={`/timeline#${yearAnchor(year)}`}
+          href={href(`/timeline#${yearAnchor(year)}`)}
           className="flex items-center justify-center text-xs uppercase"
           style={{
             width: 72,
