@@ -88,7 +88,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
       )}
 
 
-      <div style={{ position: "relative" }}>
+      <div data-hero style={{ position: "relative" }}>
 
         {hero ? (
           <img

@@ -28,7 +28,7 @@ export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
 
   return (
     <Link href={`/piece/${current.id}`}>
-      <section className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
+      <section data-hero className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
         <div className="absolute inset-0 overflow-hidden" style={{ background: palette.wall }}>
           {pieces.map((piece, i) => {
             const image = piece.images?.[0];
