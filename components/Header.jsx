@@ -24,11 +24,15 @@ const navLinkStyle = { color: palette.brass, textDecoration: "none" };
 
 // Floats transparently over the page with a soft fade behind it for
 // legibility. On pages with a full-bleed hero (marked with `data-hero`), the
-// whole header slides away once you've scrolled past the hero's bottom edge
-// and slides back when you scroll back into it.
+// whole header gradually fades and drifts up over the last HIDE_RANGE px of
+// the hero, tracking the scroll position, and comes back the same way.
+const HIDE_RANGE = 250;
+
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [pastHero, setPastHero] = useState(false);
+  // 0 = fully shown, 1 = fully hidden.
+  const [hideProgress, setHideProgress] = useState(0);
   const headerRef = useRef(null);
 
   useEffect(() => {
@@ -39,10 +43,14 @@ export default function Header() {
       const hero = document.querySelector("[data-hero]");
       const header = headerRef.current;
       if (!hero || !header) {
-        setPastHero(false);
+        setHideProgress(0);
         return;
       }
-      setPastHero(hero.getBoundingClientRect().bottom <= header.offsetHeight);
+      // Starts when the hero's bottom edge is HIDE_RANGE px below the
+      // header, done when it reaches the header's bottom edge.
+      const distance = hero.getBoundingClientRect().bottom - header.offsetHeight;
+      const progress = Math.min(1, Math.max(0, 1 - distance / HIDE_RANGE));
+      setHideProgress((prev) => (Math.abs(prev - progress) < 0.005 ? prev : progress));
     }
 
     function onScroll() {
@@ -60,7 +68,7 @@ export default function Header() {
     };
   }, []);
 
-  const hidden = pastHero && !menuOpen;
+  const progress = menuOpen ? 0 : hideProgress;
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -68,10 +76,12 @@ export default function Header() {
       ref={headerRef}
       className="fixed top-0 left-0 right-0 z-20"
       style={{
-        transform: hidden ? "translateY(-100%)" : "translateY(0)",
-        opacity: hidden ? 0 : 1,
-        pointerEvents: hidden ? "none" : undefined,
-        transition: "transform 0.45s cubic-bezier(.2,.8,.2,1), opacity 0.45s ease",
+        transform: `translateY(${-progress * 60}%)`,
+        opacity: 1 - progress,
+        pointerEvents: progress > 0.9 ? "none" : undefined,
+        // Short smoothing so mouse-wheel jumps still look gradual.
+        transition: "transform 0.2s linear, opacity 0.2s linear",
+        visibility: progress >= 1 ? "hidden" : undefined,
       }}
     >
       {/* Soft fade behind the header — extends a little below it so there's
