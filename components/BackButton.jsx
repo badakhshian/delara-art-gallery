@@ -33,11 +33,9 @@ export default function BackButton() {
         letterSpacing: "0.1em",
         textTransform: "uppercase",
         color: palette.brass,
-        textShadow: "0 1px 2px rgba(14,13,12,0.85)",
-        background: "rgba(14,13,12,0.35)",
-        border: "1px solid rgba(176,141,87,0.5)",
-        padding: "7px 12px",
-        backdropFilter: "blur(3px)",
+        background: "none",
+        border: "none",
+        padding: "7px 0",
         cursor: "pointer",
       }}
     >
