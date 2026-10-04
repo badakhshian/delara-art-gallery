@@ -18,20 +18,24 @@ export default function BackButton() {
     }
   }
 
+  // Sits just below the fixed header (logo is 60px + 12px padding top and
+  // bottom) and lines up with the logo's left edge (px-8).
   return (
     <button
       onClick={handleBack}
+      className="absolute left-8"
       style={{
-        position: "absolute",
-        top: 20,
-        left: 20,
+        top: 100,
+        zIndex: 10,
         fontFamily: "'IBM Plex Mono', monospace",
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 600,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: palette.bone,
-        background: "rgba(14,13,12,0.45)",
-        border: "none",
+        color: palette.brass,
+        textShadow: "0 1px 2px rgba(14,13,12,0.85)",
+        background: "rgba(14,13,12,0.35)",
+        border: "1px solid rgba(176,141,87,0.5)",
         padding: "7px 12px",
         backdropFilter: "blur(3px)",
         cursor: "pointer",
