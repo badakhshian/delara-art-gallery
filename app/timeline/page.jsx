@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getPieces } from "@/lib/piecesStore";
 import { formatPrice } from "@/lib/pieces";
 import { palette } from "@/lib/palette";
+import { groupPiecesByYear, yearAnchor } from "@/lib/timeline";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -15,19 +16,7 @@ export const dynamic = "force-dynamic";
 export default async function TimelinePage() {
   const pieces = await getPieces();
 
-  const byYear = {};
-  for (const p of pieces) {
-    const year = p.year || "Undated";
-    if (!byYear[year]) byYear[year] = [];
-    byYear[year].push(p);
-  }
-
-  // Oldest to newest — "Undated" pieces (no year set) go last.
-  const years = Object.keys(byYear).sort((a, b) => {
-    if (a === "Undated") return 1;
-    if (b === "Undated") return -1;
-    return parseInt(a, 10) - parseInt(b, 10);
-  });
+  const { years, byYear } = groupPiecesByYear(pieces);
 
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
@@ -52,7 +41,7 @@ export default async function TimelinePage() {
         </h1>
 
         {years.map((year) => (
-          <section key={year} className="mb-16">
+          <section key={year} id={yearAnchor(year)} className="mb-16 scroll-mt-32">
             <div
               className="flex items-baseline gap-4 mb-6"
               style={{ borderBottom: `1px solid rgba(184,141,87,0.2)`, paddingBottom: 12 }}

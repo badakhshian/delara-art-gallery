@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import HeroCarousel from "@/components/HeroCarousel";
 import Reveal from "@/components/Reveal";
 import WallAccordion from "@/components/WallAccordion";
+import TimelinePanel from "@/components/TimelinePanel";
 
 
 
@@ -77,6 +78,34 @@ export default async function HomePage() {
               no editions, no prints
             </div>
           </div>
+        </Reveal>
+      </section>
+
+      <section className="px-8 pt-16 pb-4" id="timeline">
+        <Reveal>
+          <div
+            className="flex items-baseline justify-between mb-8"
+            style={{ borderBottom: `1px solid rgba(184,141,87,0.15)`, paddingBottom: 12 }}
+          >
+            <h2 style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 500 }} className="text-xl">
+              Through the years
+            </h2>
+            <Link
+              href="/timeline"
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                color: palette.brass,
+                letterSpacing: "0.1em",
+                textDecoration: "none",
+              }}
+              className="text-xs uppercase"
+            >
+              Full timeline →
+            </Link>
+          </div>
+        </Reveal>
+        <Reveal>
+          <TimelinePanel pieces={pieces} />
         </Reveal>
       </section>
 
