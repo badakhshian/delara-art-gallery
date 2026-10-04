@@ -4,15 +4,14 @@ import { getArtist } from "@/lib/artistStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { JsonLd, artistJsonLd, pageMetadata } from "@/lib/seo";
+import { JsonLd, artistJsonLd, pageMetadata, truncate } from "@/lib/seo";
 
 export async function generateMetadata() {
   const artist = await getArtist();
   return pageMetadata({
     title: "The Artist — Delara Ahmadi Darani",
     description:
-      (artist?.bio?.[0] || "").slice(0, 160) ||
-      "About Delara Ahmadi Darani, the artist behind Delara Art Gallery.",
+      truncate(artist?.bio?.[0]) || "About Delara Ahmadi Darani, the artist behind Delara Art Gallery.",
     path: "/artist",
     images: artist?.photo ? [{ url: artist.photo, alt: artist.name || "Delara Ahmadi Darani" }] : undefined,
   });
