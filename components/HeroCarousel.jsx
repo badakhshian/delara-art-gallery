@@ -14,29 +14,30 @@ const FALLBACK_GRADIENTS = {
   "the-long-room": "linear-gradient(170deg, #1f2620 0%, #2b2320 50%, #0e0d0c 100%)",
 };
 
-export default function HeroCarousel({ pieces, intervalSeconds = 6 }) {
+// `slides` is a list of { piece, image } — see heroSlides() in lib/hero.js.
+export default function HeroCarousel({ slides, intervalSeconds = 6 }) {
   const { t, href } = useI18n();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (pieces.length < 2) return;
+    if (slides.length < 2) return;
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % pieces.length);
+      setIndex((i) => (i + 1) % slides.length);
     }, intervalSeconds * 1000);
     return () => clearInterval(id);
-  }, [pieces.length, intervalSeconds]);
+  }, [slides.length, intervalSeconds]);
 
-  const current = pieces[index];
+  if (slides.length === 0) return null;
+  const current = slides[index].piece;
 
   return (
     <Link href={href(`/piece/${current.id}`)}>
       <section data-hero className="relative w-full cursor-pointer" style={{ height: "92vh", minHeight: 640 }}>
         <div className="absolute inset-0 overflow-hidden" style={{ background: palette.wall }}>
-          {pieces.map((piece, i) => {
-            const image = piece.images?.[0];
+          {slides.map(({ piece, image }, i) => {
             return (
               <div
-                key={piece.id}
+                key={`${piece.id}:${image || i}`}
                 className="absolute inset-0"
                 style={{
                   opacity: i === index ? 1 : 0,

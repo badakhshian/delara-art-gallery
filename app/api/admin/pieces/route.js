@@ -18,6 +18,7 @@ export async function POST(request) {
       dims: body.dims || "",
       priceCents: body.priceCents ?? null,
       images: body.images || [],
+      heroImages: Array.isArray(body.heroImages) ? body.heroImages : [],
       story: body.story || "",
       titleFr: body.titleFr || "",
       mediumFr: body.mediumFr || "",

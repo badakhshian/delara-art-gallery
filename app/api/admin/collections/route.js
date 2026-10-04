@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addCollection } from "@/lib/collectionsStore";
+import { addCollection, getCollections, saveCollections } from "@/lib/collectionsStore";
 
 function slugify(text) {
   return text
@@ -28,5 +28,32 @@ export async function POST(request) {
   } catch (err) {
     console.error("Add collection error:", err);
     return NextResponse.json({ error: "Could not add the collection." }, { status: 500 });
+  }
+}
+
+// Saves edited English/French names for existing collections (matched by
+// slug). Slugs, dates and any collection not in the request stay as they are.
+export async function PUT(request) {
+  try {
+    const body = await request.json();
+    if (!Array.isArray(body.collections)) {
+      return NextResponse.json({ error: "Missing collections." }, { status: 400 });
+    }
+    const edits = Object.fromEntries(body.collections.map((c) => [c.slug, c]));
+    const current = await getCollections();
+    const updated = current.map((c) => {
+      const e = edits[c.slug];
+      if (!e) return c;
+      return {
+        ...c,
+        name: (e.name || "").trim() || c.name,
+        nameFr: (e.nameFr || "").trim(),
+      };
+    });
+    await saveCollections(updated);
+    return NextResponse.json({ ok: true, collections: updated });
+  } catch (err) {
+    console.error("Update collections error:", err);
+    return NextResponse.json({ error: "Could not save collections." }, { status: 500 });
   }
 }

@@ -11,12 +11,15 @@ export default function AdminTabs({ active }) {
   });
 
   return (
-    <div className="flex items-baseline gap-6">
+    <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
       <Link href="/admin" style={tabStyle(active === "pieces")}>
         Manage pieces
       </Link>
       <Link href="/admin/artist" style={tabStyle(active === "artist")}>
         Artist
+      </Link>
+      <Link href="/admin/collections" style={tabStyle(active === "collections")}>
+        Collections
       </Link>
     </div>
   );

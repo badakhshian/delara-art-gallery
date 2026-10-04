@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
-import FrenchPieceFields from "@/components/admin/FrenchPieceFields";
+import BilingualField from "@/components/admin/BilingualField";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -48,6 +48,7 @@ export default function NewPiecePage() {
   const [french, setFrench] = useState({ titleFr: "", mediumFr: "", dimsFr: "", storyFr: "" });
   const [onWall, setOnWall] = useState(true);
   const [files, setFiles] = useState([]);
+  const [firstPhotoInHero, setFirstPhotoInHero] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -108,6 +109,7 @@ export default function NewPiecePage() {
           dims,
           priceCents,
           images: uploadedUrls,
+          heroImages: firstPhotoInHero && uploadedUrls[0] ? [uploadedUrls[0]] : [],
           collection: collectionSlug,
           certificateId,
           story,
@@ -130,7 +132,7 @@ export default function NewPiecePage() {
 
   return (
     <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-6 sm:px-14 py-14">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="text-xs uppercase mb-3" style={{ ...labelStyle, color: adminPalette.brass }}>
           Admin
         </div>
@@ -142,18 +144,16 @@ export default function NewPiecePage() {
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Title
-            </label>
-            <input
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          <BilingualField
+            label="Title"
+            en={title}
+            onEn={setTitle}
+            fr={french.titleFr}
+            onFr={(v) => setFrench((f) => ({ ...f, titleFr: v }))}
+            required
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
@@ -162,30 +162,25 @@ export default function NewPiecePage() {
             <input type="text" value={year} onChange={(e) => setYear(e.target.value)} style={inputStyle} />
           </div>
 
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Medium
-            </label>
-            <input
-              type="text"
-              value={medium}
-              onChange={(e) => setMedium(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          <BilingualField
+            label="Medium"
+            en={medium}
+            onEn={setMedium}
+            fr={french.mediumFr}
+            onFr={(v) => setFrench((f) => ({ ...f, mediumFr: v }))}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Dimensions
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. 48 x 48 in"
-              value={dims}
-              onChange={(e) => setDims(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          <BilingualField
+            label="Dimensions"
+            en={dims}
+            onEn={setDims}
+            fr={french.dimsFr}
+            onFr={(v) => setFrench((f) => ({ ...f, dimsFr: v }))}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
@@ -255,21 +250,13 @@ export default function NewPiecePage() {
             />
           </div>
 
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Story
-            </label>
-            <textarea
-              rows={5}
-              value={story}
-              onChange={(e) => setStory(e.target.value)}
-              style={{ ...inputStyle, resize: "vertical" }}
-            />
-          </div>
-
-          <FrenchPieceFields
-            values={french}
-            onChange={(key, value) => setFrench((f) => ({ ...f, [key]: value }))}
+          <BilingualField
+            label="Story"
+            en={story}
+            onEn={setStory}
+            fr={french.storyFr}
+            onFr={(v) => setFrench((f) => ({ ...f, storyFr: v }))}
+            rows={10}
             inputStyle={inputStyle}
             labelStyle={labelStyle}
           />
@@ -291,6 +278,14 @@ export default function NewPiecePage() {
               onChange={(e) => setFiles(Array.from(e.target.files))}
               style={{ ...inputStyle, padding: "8px" }}
             />
+            <label className="flex items-center gap-2 mt-3 text-xs uppercase" style={labelStyle}>
+              <input
+                type="checkbox"
+                checked={firstPhotoInHero}
+                onChange={(e) => setFirstPhotoInHero(e.target.checked)}
+              />
+              Show the first photo in the homepage hero
+            </label>
           </div>
 
 

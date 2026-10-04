@@ -6,6 +6,7 @@ import Image from "next/image";
 import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
 import { localizeArtist } from "@/lib/localize";
+import BilingualField from "@/components/admin/BilingualField";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -87,7 +88,7 @@ export default function EditArtistForm({ artist }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-2xl">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-5xl">
       <div>
         <label className="text-xs uppercase block mb-2" style={labelStyle}>
           Name
@@ -100,31 +101,16 @@ export default function EditArtistForm({ artist }) {
           style={inputStyle}
         />
       </div>
-
-      <div>
-        <label className="text-xs uppercase block mb-2" style={labelStyle}>
-          Bio (separate paragraphs with a blank line)
-        </label>
-        <textarea
-          rows={12}
-          value={bioText}
-          onChange={(e) => setBioText(e.target.value)}
-          style={{ ...inputStyle, resize: "vertical" }}
-        />
-      </div>
-
-      <div>
-        <label className="text-xs uppercase block mb-2" style={labelStyle}>
-          Biographie en français — French site (leave empty to show the English)
-        </label>
-        <textarea
-          rows={12}
-          lang="fr"
-          value={bioFrText}
-          onChange={(e) => setBioFrText(e.target.value)}
-          style={{ ...inputStyle, resize: "vertical" }}
-        />
-      </div>
+      <BilingualField
+        label="Bio (separate paragraphs with a blank line)"
+        en={bioText}
+        onEn={setBioText}
+        fr={bioFrText}
+        onFr={setBioFrText}
+        rows={14}
+        inputStyle={inputStyle}
+        labelStyle={labelStyle}
+      />
 
       {photo && (
         <div>

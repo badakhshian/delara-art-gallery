@@ -6,7 +6,7 @@ import Image from "next/image";
 import { adminPalette } from "@/lib/palette";
 import { resizeImageFile } from "@/lib/imageResize";
 import { localizePiece } from "@/lib/localize";
-import FrenchPieceFields from "@/components/admin/FrenchPieceFields";
+import BilingualField from "@/components/admin/BilingualField";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -56,6 +56,8 @@ export default function EditPieceForm({ piece }) {
   const [sold, setSold] = useState(!!piece.sold);
   const [onWall, setOnWall] = useState(piece.onWall !== false);
   const [existingImages, setExistingImages] = useState(piece.images || []);
+  // Photos ticked to appear in the homepage hero slideshow.
+  const [heroImages, setHeroImages] = useState(piece.heroImages || []);
   const [newFiles, setNewFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -69,6 +71,11 @@ export default function EditPieceForm({ piece }) {
 
   function removeExistingImage(url) {
     setExistingImages((imgs) => imgs.filter((i) => i !== url));
+    setHeroImages((imgs) => imgs.filter((i) => i !== url));
+  }
+
+  function toggleHero(url) {
+    setHeroImages((imgs) => (imgs.includes(url) ? imgs.filter((i) => i !== url) : [...imgs, url]));
   }
 
   async function handleSubmit(e) {
@@ -117,6 +124,7 @@ export default function EditPieceForm({ piece }) {
           dims,
           priceCents,
           images: [...existingImages, ...uploadedUrls],
+          heroImages: heroImages.filter((url) => existingImages.includes(url)),
           collection: collectionSlug,
           certificateId,
           story,
@@ -140,7 +148,7 @@ export default function EditPieceForm({ piece }) {
 
   return (
     <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-6 sm:px-14 py-14">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="text-xs uppercase mb-3" style={{ ...labelStyle, color: adminPalette.brass }}>
           Admin
         </div>
@@ -152,18 +160,16 @@ export default function EditPieceForm({ piece }) {
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Title
-            </label>
-            <input
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          <BilingualField
+            label="Title"
+            en={title}
+            onEn={setTitle}
+            fr={french.titleFr}
+            onFr={(v) => setFrench((f) => ({ ...f, titleFr: v }))}
+            required
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
@@ -172,29 +178,25 @@ export default function EditPieceForm({ piece }) {
             <input type="text" value={year} onChange={(e) => setYear(e.target.value)} style={inputStyle} />
           </div>
 
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Medium
-            </label>
-            <input
-              type="text"
-              value={medium}
-              onChange={(e) => setMedium(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          <BilingualField
+            label="Medium"
+            en={medium}
+            onEn={setMedium}
+            fr={french.mediumFr}
+            onFr={(v) => setFrench((f) => ({ ...f, mediumFr: v }))}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Dimensions
-            </label>
-            <input
-              type="text"
-              value={dims}
-              onChange={(e) => setDims(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          <BilingualField
+            label="Dimensions"
+            en={dims}
+            onEn={setDims}
+            fr={french.dimsFr}
+            onFr={(v) => setFrench((f) => ({ ...f, dimsFr: v }))}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
 
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
@@ -262,21 +264,13 @@ export default function EditPieceForm({ piece }) {
             />
           </div>
 
-          <div>
-            <label className="text-xs uppercase block mb-2" style={labelStyle}>
-              Story
-            </label>
-            <textarea
-              rows={5}
-              value={story}
-              onChange={(e) => setStory(e.target.value)}
-              style={{ ...inputStyle, resize: "vertical" }}
-            />
-          </div>
-
-          <FrenchPieceFields
-            values={french}
-            onChange={(key, value) => setFrench((f) => ({ ...f, [key]: value }))}
+          <BilingualField
+            label="Story"
+            en={story}
+            onEn={setStory}
+            fr={french.storyFr}
+            onFr={(v) => setFrench((f) => ({ ...f, storyFr: v }))}
+            rows={10}
             inputStyle={inputStyle}
             labelStyle={labelStyle}
           />
@@ -297,37 +291,48 @@ export default function EditPieceForm({ piece }) {
               <label className="text-xs uppercase block mb-2" style={labelStyle}>
                 Current photos
               </label>
+              <p className="text-xs mb-3" style={{ fontFamily: "'Inter', sans-serif", color: adminPalette.muted }}>
+                Tick <strong>Hero</strong> on any photo to show it in the big slideshow at the top of
+                the homepage. Only ticked photos (from all pieces) are shown there; if none are ticked
+                anywhere, every piece's first photo is shown.
+              </p>
               <div className="flex flex-wrap gap-3">
                 {existingImages.map((url) => (
-                  <div key={url} style={{ position: "relative", width: 88, height: 88 }}>
-                    <Image
-                      src={url}
-                      alt="Piece photo"
-                      fill
-                      sizes="88px"
-                      style={{ objectFit: "cover" }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeExistingImage(url)}
-                      style={{
-                        position: "absolute",
-                        top: -8,
-                        right: -8,
-                        width: 22,
-                        height: 22,
-                        borderRadius: "50%",
-                        background: adminPalette.oxblood,
-                        color: adminPalette.surface,
-                        border: "none",
-                        cursor: "pointer",
-                        fontSize: 12,
-                        lineHeight: "22px",
-                      }}
-                      aria-label="Remove this photo"
-                    >
-                      ×
-                    </button>
+                  <div key={url} style={{ width: 88 }}>
+                    <div style={{ position: "relative", width: 88, height: 88 }}>
+                      <Image
+                        src={url}
+                        alt="Piece photo"
+                        fill
+                        sizes="88px"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeExistingImage(url)}
+                        style={{
+                          position: "absolute",
+                          top: -8,
+                          right: -8,
+                          width: 22,
+                          height: 22,
+                          borderRadius: "50%",
+                          background: adminPalette.oxblood,
+                          color: adminPalette.surface,
+                          border: "none",
+                          cursor: "pointer",
+                          fontSize: 12,
+                          lineHeight: "22px",
+                        }}
+                        aria-label="Remove this photo"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <label className="flex items-center gap-1 mt-2 text-[10px] uppercase" style={labelStyle}>
+                      <input type="checkbox" checked={heroImages.includes(url)} onChange={() => toggleHero(url)} />
+                      Hero
+                    </label>
                   </div>
                 ))}
               </div>

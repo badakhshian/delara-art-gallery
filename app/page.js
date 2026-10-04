@@ -8,22 +8,26 @@ import HeroCarousel from "@/components/HeroCarousel";
 import Reveal from "@/components/Reveal";
 import WallAccordion from "@/components/WallAccordion";
 import TimelinePanel from "@/components/TimelinePanel";
-import { pageMetadata, pieceImages } from "@/lib/seo";
+import { absoluteUrl, pageMetadata, pieceImages } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
 import { localizePieces } from "@/lib/localize";
+import { heroSlides } from "@/lib/hero";
 
 
 
 export async function generateMetadata() {
   const { lang, t } = getI18n();
   const pieces = localizePieces(await getPieces(), lang);
-  const hero = pieces.find((p) => p.isHero) || pieces[0];
+  // Share image: the first hero slide's photo.
+  const first = heroSlides(pieces).find((s) => s.image);
   return pageMetadata({
     title: t.meta.homeTitle,
     description: t.meta.homeDescription,
     path: "/",
     lang,
-    images: hero ? pieceImages(hero, lang) : undefined,
+    images: first
+      ? [{ url: absoluteUrl(first.image), alt: pieceImages(first.piece, lang)[0]?.alt }]
+      : undefined,
   });
 }
 
@@ -38,7 +42,7 @@ export default async function HomePage() {
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
-      <HeroCarousel pieces={pieces} intervalSeconds={6} />
+      <HeroCarousel slides={heroSlides(pieces)} intervalSeconds={6} />
 
 
       <section className="px-8 pb-4 pt-16" id="collection">
