@@ -39,3 +39,14 @@ body.custom-cursor-active a,
 body.custom-cursor-active button {
   cursor: none;
 }
+
+/* Feathered photo edges: fades the outer few percent of each side into the
+   background, so the corners (where both fades meet) are softest. */
+.soft-edges {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 7%, #000 93%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 7%, #000 93%, transparent 100%);
+  mask-composite: intersect;
+}

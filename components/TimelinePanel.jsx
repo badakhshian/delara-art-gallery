@@ -137,9 +137,9 @@ function MobileThumbs({ year, pieces, towardLine }) {
           className="block min-w-0"
           style={{ textDecoration: "none" }}
         >
-          <div className="relative overflow-hidden" style={{ aspectRatio: "4 / 5", background: palette.wall }}>
+          <div className="relative overflow-hidden" style={{ aspectRatio: "4 / 5" }}>
             {piece.images?.[0] && (
-              <Image src={piece.images[0]} alt={piece.title} fill sizes="25vw" style={{ objectFit: "cover" }} />
+              <Image src={piece.images[0]} alt={piece.title} fill sizes="25vw" className="soft-edges" style={{ objectFit: "cover" }} />
             )}
           </div>
           <div
@@ -207,7 +207,7 @@ function YearThumbs({ year, pieces }) {
         >
           <div
             className="relative overflow-hidden"
-            style={{ width: THUMB_W, height: THUMB_H, background: palette.wall }}
+            style={{ width: THUMB_W, height: THUMB_H }}
           >
             {piece.images?.[0] && (
               <Image
@@ -215,6 +215,7 @@ function YearThumbs({ year, pieces }) {
                 alt={piece.title}
                 fill
                 sizes={`${THUMB_W}px`}
+                className="soft-edges"
                 style={{ objectFit: "cover" }}
               />
             )}

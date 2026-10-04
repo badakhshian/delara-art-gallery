@@ -167,7 +167,7 @@ function PieceCards({ pieces }) {
         >
           <div
             className="relative overflow-hidden mb-3"
-            style={{ aspectRatio: "4 / 5", background: palette.wall }}
+            style={{ aspectRatio: "4 / 5" }}
           >
             {piece.images?.[0] && (
               <Image
@@ -175,6 +175,7 @@ function PieceCards({ pieces }) {
                 alt={piece.title}
                 fill
                 sizes="(max-width: 1024px) 45vw, 22vw"
+                className="soft-edges"
                 style={{ objectFit: "cover" }}
               />
             )}
