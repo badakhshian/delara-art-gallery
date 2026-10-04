@@ -10,7 +10,8 @@ import CertificateBackButton from "@/components/CertificateBackButton";
 export async function generateMetadata({ params }) {
   const piece = await getPiece(params.id);
   if (!piece) return {};
-  return { title: `Certificate of Authenticity — ${piece.title}` };
+  // Kept out of search results — the piece page is the one that should rank.
+  return { title: `Certificate of Authenticity — ${piece.title}`, robots: { index: false } };
 }
 
 export const dynamic = "force-dynamic";

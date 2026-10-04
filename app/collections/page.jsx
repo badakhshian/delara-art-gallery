@@ -5,10 +5,14 @@ import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CollectionBanner from "@/components/CollectionBanner";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Collections — Delara Art Gallery",
-};
+  description:
+    "Browse Delara Ahmadi Darani's original artworks by collection — mixed-media paintings and sculpture, each a one-of-a-kind piece with a certificate of authenticity.",
+  path: "/collections",
+});
 
 export const dynamic = "force-dynamic";
 

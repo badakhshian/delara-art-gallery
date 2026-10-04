@@ -6,10 +6,14 @@ import { palette } from "@/lib/palette";
 import { groupPiecesByYear, yearAnchor } from "@/lib/timeline";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Timeline — Delara Art Gallery",
-};
+  description:
+    "Every original work by Delara Ahmadi Darani, year by year — follow how the work has moved through materials and ideas.",
+  path: "/timeline",
+});
 
 export const dynamic = "force-dynamic";
 

@@ -5,11 +5,18 @@ import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
+import { pageMetadata, pieceImages } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const collection = await getCollection(params.slug);
   if (!collection) return {};
-  return { title: `${collection.name} — Delara Art Gallery` };
+  const pieces = (await getPieces()).filter((p) => p.collection === collection.slug);
+  return pageMetadata({
+    title: `${collection.name} — Delara Art Gallery`,
+    description: `${collection.name}: ${pieces.length} original ${pieces.length === 1 ? "work" : "works"} by Delara Ahmadi Darani, available directly from the studio.`,
+    path: `/collections/${collection.slug}`,
+    images: pieces[0] ? pieceImages(pieces[0]).slice(0, 1) : undefined,
+  });
 }
 
 export const dynamic = "force-dynamic";

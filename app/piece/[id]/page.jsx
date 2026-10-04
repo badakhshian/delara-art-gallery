@@ -9,14 +9,17 @@ import BuyButton from "@/components/BuyButton";
 import PieceQRCode from "@/components/PieceQRCode";
 import SoldStatusRefresher from "@/components/SoldStatusRefresher";
 import BackButton from "@/components/BackButton";
+import { ARTIST_NAME, JsonLd, pageMetadata, pieceDescription, pieceImages, pieceJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const piece = await getPiece(params.id);
   if (!piece) return {};
-  return {
-    title: `${piece.title} — Delara Art Gallery`,
-    description: piece.story,
-  };
+  return pageMetadata({
+    title: `${piece.title} — ${ARTIST_NAME}`,
+    description: pieceDescription(piece),
+    path: `/piece/${piece.id}`,
+    images: pieceImages(piece),
+  });
 }
 
 export const dynamic = "force-dynamic";
@@ -59,6 +62,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
     
         <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
+      <JsonLd data={pieceJsonLd(piece)} />
 
       <SoldStatusRefresher active={purchaseStatus === "success" && !piece.sold} />
 

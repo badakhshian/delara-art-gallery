@@ -4,10 +4,19 @@ import { getArtist } from "@/lib/artistStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { JsonLd, artistJsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "The Artist — Delara Art Gallery",
-};
+export async function generateMetadata() {
+  const artist = await getArtist();
+  return pageMetadata({
+    title: "The Artist — Delara Ahmadi Darani",
+    description:
+      (artist?.bio?.[0] || "").slice(0, 160) ||
+      "About Delara Ahmadi Darani, the artist behind Delara Art Gallery.",
+    path: "/artist",
+    images: artist?.photo ? [{ url: artist.photo, alt: artist.name || "Delara Ahmadi Darani" }] : undefined,
+  });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +26,7 @@ export default async function ArtistPage() {
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
+      <JsonLd data={artistJsonLd(artist)} />
 
       <div className="px-6 sm:px-14 pt-32 pb-14 max-w-4xl mx-auto">
 

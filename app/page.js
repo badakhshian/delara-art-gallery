@@ -8,8 +8,21 @@ import HeroCarousel from "@/components/HeroCarousel";
 import Reveal from "@/components/Reveal";
 import WallAccordion from "@/components/WallAccordion";
 import TimelinePanel from "@/components/TimelinePanel";
+import { SITE_NAME, pageMetadata, pieceImages } from "@/lib/seo";
 
 
+
+export async function generateMetadata() {
+  const pieces = await getPieces();
+  const hero = pieces.find((p) => p.isHero) || pieces[0];
+  return pageMetadata({
+    title: `${SITE_NAME} — Original works by Delara Ahmadi Darani`,
+    description:
+      "Original mixed-media works by Delara Ahmadi Darani — acrylic and modelling paste built up into raised, textured surfaces. Available directly from the studio, one piece at a time.",
+    path: "/",
+    images: hero ? pieceImages(hero) : undefined,
+  });
+}
 
 export const dynamic = "force-dynamic";
 
