@@ -49,8 +49,21 @@ export async function POST(request) {
 
     const piecePath = localizePath(lang, `/piece/${piece.id}`);
 
+    // Stripe writes its invoice, receipt and their emails in the Customer's
+    // preferred language; without a Customer it uses the Dashboard default
+    // (English). So French buyers get a Customer marked fr-CA up front —
+    // Checkout fills in their email and name on it. English checkouts stay
+    // as before (no Customer).
+    const customer = fr
+      ? await stripe.customers.create({
+          preferred_locales: ["fr-CA", "fr"],
+          metadata: { source: "artedelara.com checkout", pieceId: piece.id },
+        })
+      : null;
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      ...(customer ? { customer: customer.id } : {}),
       // Stripe's own checkout page in the buyer's language.
       locale: fr ? "fr-CA" : "en",
       line_items: [
