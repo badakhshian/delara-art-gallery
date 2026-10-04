@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { groupPiecesByYear, yearAnchor } from "@/lib/timeline";
+import HorizontalScroller from "@/components/HorizontalScroller";
 
 // How many thumbnails each year shows before collapsing into "+N more".
 const THUMBS_PER_YEAR = 3;
@@ -12,16 +13,32 @@ const THUMB_H = 150;
 const ZONE_H = 190;
 const COLUMN_GAP = 48;
 
-// Homepage preview of /timeline: a horizontal gold line through the middle
-// with one stop per year (oldest first). Years alternate sides — even ones
-// have the year above the line and pieces below, odd ones the reverse.
-// Scrolls natively left/right when the years don't fit.
+// Homepage preview of /timeline, one stop per year (oldest first), with years
+// alternating sides of a gold line:
+// - Desktop / tablet (sm+): horizontal line through the middle — even years
+//   have the year above and pieces below, odd ones the reverse. Scrolls by
+//   arrow buttons, mouse drag, trackpad or touch swipe.
+// - Mobile (<sm): vertical line down the centre — even years have the year
+//   on the left and pieces on the right, odd ones the reverse.
 export default function TimelinePanel({ pieces }) {
   const { years, byYear } = groupPiecesByYear(pieces);
   if (years.length === 0) return null;
 
   return (
-    <div className="overflow-x-auto pb-4" style={{ scrollbarWidth: "thin" }}>
+    <>
+      <div className="hidden sm:block">
+        <HorizontalTimeline years={years} byYear={byYear} />
+      </div>
+      <div className="sm:hidden">
+        <VerticalTimeline years={years} byYear={byYear} />
+      </div>
+    </>
+  );
+}
+
+function HorizontalTimeline({ years, byYear }) {
+  return (
+    <HorizontalScroller arrowTop={ZONE_H + 4}>
       <div className="flex w-max">
         {years.map((year, i) => {
           const yearPieces = byYear[year];
@@ -61,6 +78,96 @@ export default function TimelinePanel({ pieces }) {
           );
         })}
       </div>
+    </HorizontalScroller>
+  );
+}
+
+function VerticalTimeline({ years, byYear }) {
+  return (
+    <div className="relative">
+      <div
+        className="absolute top-0 bottom-0"
+        style={{ left: "50%", width: 1, background: "rgba(184,141,87,0.35)" }}
+      />
+      {years.map((year, i) => {
+        const yearPieces = byYear[year];
+        const piecesLeft = i % 2 === 1;
+        const label = (
+          <div className={piecesLeft ? "text-left" : "text-right"}>
+            <YearLabel year={year} count={yearPieces.length} />
+          </div>
+        );
+        const thumbs = <MobileThumbs year={year} pieces={yearPieces} towardLine={piecesLeft ? "right" : "left"} />;
+
+        return (
+          <div key={year} className="relative grid grid-cols-2 pb-10">
+            <div
+              className="absolute rounded-full"
+              style={{
+                left: "50%",
+                top: 12,
+                width: 9,
+                height: 9,
+                transform: "translateX(-50%)",
+                background: palette.brass,
+              }}
+            />
+            <div style={{ paddingRight: 20 }}>{piecesLeft ? thumbs : label}</div>
+            <div style={{ paddingLeft: 20 }}>{piecesLeft ? label : thumbs}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function MobileThumbs({ year, pieces, towardLine }) {
+  const shown = pieces.slice(0, THUMBS_PER_YEAR);
+  const extra = pieces.length - shown.length;
+
+  // On the left of the line, fill the grid right-to-left so the first piece
+  // sits next to the line rather than at the screen edge.
+  return (
+    <div className="grid grid-cols-2 gap-2" dir={towardLine === "right" ? "rtl" : "ltr"}>
+      {shown.map((piece) => (
+        <Link
+          key={piece.id}
+          href={`/piece/${piece.id}`}
+          dir="ltr"
+          className="block min-w-0"
+          style={{ textDecoration: "none" }}
+        >
+          <div className="relative overflow-hidden" style={{ aspectRatio: "4 / 5", background: palette.wall }}>
+            {piece.images?.[0] && (
+              <Image src={piece.images[0]} alt={piece.title} fill sizes="25vw" style={{ objectFit: "cover" }} />
+            )}
+          </div>
+          <div
+            className="truncate mt-1"
+            style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontSize: "0.7rem" }}
+          >
+            {piece.title}
+          </div>
+        </Link>
+      ))}
+
+      {extra > 0 && (
+        <Link
+          href={`/timeline#${yearAnchor(year)}`}
+          dir="ltr"
+          className="flex items-center justify-center text-xs uppercase"
+          style={{
+            aspectRatio: "4 / 5",
+            border: "1px solid rgba(184,141,87,0.35)",
+            fontFamily: "'IBM Plex Mono', monospace",
+            color: palette.brass,
+            letterSpacing: "0.1em",
+            textDecoration: "none",
+          }}
+        >
+          +{extra}
+        </Link>
+      )}
     </div>
   );
 }
