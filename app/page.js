@@ -109,7 +109,10 @@ export default async function HomePage() {
         </Reveal>
       </section>
 
-      <section className="px-8 py-16 flex flex-col items-center text-center">
+      <section
+        className="px-8 py-16 flex flex-col items-center text-center"
+        style={{ background: palette.wall, borderTop: `1px solid rgba(184,141,87,0.15)` }}
+      >
         <Reveal>
           <h2
             style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
