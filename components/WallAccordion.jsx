@@ -20,16 +20,26 @@ export default function WallAccordion({ pieces }) {
   );
 }
 
+// Finger travel (px) needed to step one piece during a touch swipe.
+const TOUCH_STEP_PX = 60;
+
 function AccordionRow({ pieces }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
   const tickingRef = useRef(false);
+  // Touch swipes drive activeIndex directly instead of native scrolling: on
+  // iPad the row only overflows by a few hundred px, so a momentum flick
+  // jumped from the first piece straight to the last.
+  const touchRef = useRef(null);
+  const touchDrivenRef = useRef(false);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     function computeActive() {
+      tickingRef.current = false;
+      if (touchDrivenRef.current) return;
       const maxScrollLeft = container.scrollWidth - container.clientWidth;
       let index = 0;
       if (maxScrollLeft > 0) {
@@ -37,7 +47,6 @@ function AccordionRow({ pieces }) {
         index = Math.round(progress * (pieces.length - 1));
       }
       setActiveIndex((prev) => (prev === index ? prev : index));
-      tickingRef.current = false;
     }
 
     function onScroll() {
@@ -55,11 +64,63 @@ function AccordionRow({ pieces }) {
     };
   }, [pieces.length]);
 
+  // After a touch-driven change, scroll so the active panel is in view, using
+  // the same index <-> progress mapping as computeActive. Re-run when the
+  // width transition ends, since mid-transition scrollWidth is smaller and
+  // the browser clamps scrollLeft.
+  function scrollToActive() {
+    const container = containerRef.current;
+    if (!container || !touchDrivenRef.current) return;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const progress = pieces.length > 1 ? activeIndex / (pieces.length - 1) : 0;
+    container.scrollLeft = progress * maxScrollLeft;
+  }
+
+  useEffect(scrollToActive, [activeIndex, pieces.length]);
+
+  function onTouchStart(e) {
+    const t = e.touches[0];
+    touchRef.current = { x: t.clientX, y: t.clientY, startIndex: activeIndex, axis: null };
+  }
+
+  function onTouchMove(e) {
+    const start = touchRef.current;
+    if (!start) return;
+    const t = e.touches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    if (!start.axis) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      start.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    }
+    if (start.axis !== "x") return;
+    touchDrivenRef.current = true;
+    const index = Math.min(
+      pieces.length - 1,
+      Math.max(0, start.startIndex - Math.round(dx / TOUCH_STEP_PX))
+    );
+    setActiveIndex((prev) => (prev === index ? prev : index));
+  }
+
+  function onTouchEnd() {
+    touchRef.current = null;
+  }
+
   return (
     <div
       ref={containerRef}
       className="flex gap-2 overflow-x-auto"
-      style={{ height: 420, WebkitOverflowScrolling: "touch" }}
+      style={{ height: 420, touchAction: "pan-y" }}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchEnd}
+      onTransitionEnd={(e) => {
+        if (e.propertyName === "width") scrollToActive();
+      }}
+      onWheel={() => {
+        touchDrivenRef.current = false;
+      }}
     >
       {pieces.map((piece, i) => (
         <AccordionPanel
