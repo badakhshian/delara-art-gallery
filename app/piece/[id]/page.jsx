@@ -76,9 +76,11 @@ export default async function PieceDetailPage({ params, searchParams }) {
       <SoldStatusRefresher active={purchaseStatus === "success" && !piece.sold} />
 
       {purchaseStatus === "success" && (
-
+        // marginTop clears the fixed header (60px logo + 12px padding top
+        // and bottom) so the banner isn't drawn underneath it.
         <div
           style={{
+            marginTop: 84,
             background: palette.brass,
             padding: "22px 24px",
             textAlign: "center",
