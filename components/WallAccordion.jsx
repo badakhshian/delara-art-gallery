@@ -6,6 +6,7 @@ import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { formatPrice } from "@/lib/pieces";
 import { useI18n } from "@/components/LangProvider";
+import { featuredImage } from "@/lib/hero";
 
 export default function WallAccordion({ pieces }) {
   if (pieces.length === 0) return null;
@@ -152,9 +153,9 @@ function AccordionPanel({ piece, active, onMouseEnter }) {
         display: "block",
       }}
     >
-      {piece.images?.[0] && (
+      {featuredImage(piece) && (
         <Image
-          src={piece.images[0]}
+          src={featuredImage(piece)}
           alt={piece.title}
           fill
           sizes="(max-width: 1024px) 50vw, 20vw"
@@ -299,8 +300,8 @@ function MobileAccordionPanel({ piece, active }) {
         textDecoration: "none",
       }}
     >
-      {piece.images?.[0] && (
-        <Image src={piece.images[0]} alt={piece.title} fill sizes="100vw" style={{ objectFit: "cover" }} />
+      {featuredImage(piece) && (
+        <Image src={featuredImage(piece)} alt={piece.title} fill sizes="100vw" style={{ objectFit: "cover" }} />
       )}
       {piece.sold && (
         <div

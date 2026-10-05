@@ -292,9 +292,10 @@ export default function EditPieceForm({ piece }) {
                 Current photos
               </label>
               <p className="text-xs mb-3" style={{ fontFamily: "'Inter', sans-serif", color: adminPalette.muted }}>
-                Tick <strong>Hero</strong> on any photo to show it in the big slideshow at the top of
-                the homepage. Only ticked photos (from all pieces) are shown there; if none are ticked
-                anywhere, every piece's first photo is shown.
+                Tick <strong>Hero</strong> on any photo to feature it on the homepage: it appears in
+                the big slideshow at the top, and the first ticked photo is used for this piece in
+                "Currently on the wall". Only ticked photos (from all pieces) are shown in the
+                slideshow; if none are ticked anywhere, every piece's first photo is shown.
               </p>
               <div className="flex flex-wrap gap-3">
                 {existingImages.map((url) => (
