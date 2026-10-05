@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { useI18n } from "@/components/LangProvider";
+import { featuredImage } from "@/lib/hero";
 import WallLabel from "./WallLabel";
 
 const FALLBACK_GRADIENTS = {
@@ -37,7 +38,7 @@ export default function CollectionBanner({ pieces, intervalSeconds = 5 }) {
         style={{ height: "62vh", minHeight: 420, background: palette.wall }}
       >
         {pieces.map((piece, i) => {
-          const image = piece.images?.[0];
+          const image = featuredImage(piece);
           return (
             <div
               key={piece.id}

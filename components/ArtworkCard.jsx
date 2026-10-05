@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { palette } from "@/lib/palette";
 import { useI18n } from "@/components/LangProvider";
+import { featuredImage } from "@/lib/hero";
 import WallLabel from "./WallLabel";
 
 // Deterministic placeholder gradients for pieces without a photo yet, keyed
@@ -19,7 +20,7 @@ const FALLBACK_GRADIENTS = {
 export default function ArtworkCard({ piece, tall }) {
   const { t, href } = useI18n();
   const [hover, setHover] = useState(false);
-  const image = piece.images?.[0];
+  const image = featuredImage(piece);
 
   return (
     <Link

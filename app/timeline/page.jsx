@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { pageMetadata } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
 import { localizePieces } from "@/lib/localize";
+import { featuredImage } from "@/lib/hero";
 
 export function generateMetadata() {
   const { lang, t } = getI18n();
@@ -182,9 +183,9 @@ function PieceCards({ pieces }) {
             className="relative overflow-hidden mb-3"
             style={{ aspectRatio: "4 / 5" }}
           >
-            {piece.images?.[0] && (
+            {featuredImage(piece) && (
               <Image
-                src={piece.images[0]}
+                src={featuredImage(piece)}
                 alt={piece.title}
                 fill
                 sizes="(max-width: 1024px) 45vw, 22vw"

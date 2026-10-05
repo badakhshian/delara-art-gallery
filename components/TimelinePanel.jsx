@@ -4,6 +4,7 @@ import { palette } from "@/lib/palette";
 import { groupPiecesByYear, yearAnchor } from "@/lib/timeline";
 import HorizontalScroller from "@/components/HorizontalScroller";
 import { getI18n } from "@/lib/serverLang";
+import { featuredImage } from "@/lib/hero";
 
 // How many thumbnails each year shows before collapsing into "+N more".
 const THUMBS_PER_YEAR = 3;
@@ -140,8 +141,8 @@ function MobileThumbs({ year, pieces, towardLine }) {
           style={{ textDecoration: "none" }}
         >
           <div className="relative overflow-hidden" style={{ aspectRatio: "4 / 5" }}>
-            {piece.images?.[0] && (
-              <Image src={piece.images[0]} alt={piece.title} fill sizes="25vw" className="soft-edges" style={{ objectFit: "cover" }} />
+            {featuredImage(piece) && (
+              <Image src={featuredImage(piece)} alt={piece.title} fill sizes="25vw" className="soft-edges" style={{ objectFit: "cover" }} />
             )}
           </div>
           <div
@@ -213,9 +214,9 @@ function YearThumbs({ year, pieces }) {
             className="relative overflow-hidden"
             style={{ width: THUMB_W, height: THUMB_H }}
           >
-            {piece.images?.[0] && (
+            {featuredImage(piece) && (
               <Image
-                src={piece.images[0]}
+                src={featuredImage(piece)}
                 alt={piece.title}
                 fill
                 sizes={`${THUMB_W}px`}
