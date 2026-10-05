@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getPiece } from "@/lib/piecesStore";
+import { senderAddress } from "@/lib/emailSender";
 
 
 export async function POST(request) {
@@ -27,7 +28,7 @@ export async function POST(request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_ADDRESS || "onboarding@resend.dev",
+      from: senderAddress(),
       to: "Ahmadi.delara@gmail.com",
       replyTo: email,
       subject: `Viewing request${piece ? `: ${piece.title}` : ""}`,
