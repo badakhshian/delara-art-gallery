@@ -5,6 +5,7 @@ import { list, put } from "@vercel/blob";
 import { updatePiece, getPiece } from "@/lib/piecesStore";
 import { localizePiece } from "@/lib/localize";
 import { buildBuyerEmail } from "@/lib/purchaseEmail";
+import { senderAddress } from "@/lib/emailSender";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-06-20",
@@ -125,7 +126,7 @@ export async function POST(request) {
 
     if (process.env.RESEND_API_KEY) {
       const resend = new Resend(process.env.RESEND_API_KEY);
-      const fromAddress = process.env.RESEND_FROM_ADDRESS || "onboarding@resend.dev";
+      const fromAddress = senderAddress();
 
       if (buyerEmail) {
         try {
