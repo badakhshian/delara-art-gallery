@@ -1,10 +1,9 @@
-import Link from "next/link";
 import { getPieces } from "@/lib/piecesStore";
 import { getCollections } from "@/lib/collectionsStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CollectionBanner from "@/components/CollectionBanner";
+import CollectionPoster from "@/components/CollectionPoster";
 import { pageMetadata } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
 import { localizeCollections, localizePieces } from "@/lib/localize";
@@ -22,7 +21,7 @@ export function generateMetadata() {
 export const dynamic = "force-dynamic";
 
 export default async function CollectionsPage() {
-  const { lang, t, href } = getI18n();
+  const { lang, t } = getI18n();
   const collectionsList = localizeCollections(await getCollections(), lang);
   const orderedCollections = [...collectionsList].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
@@ -57,29 +56,8 @@ export default async function CollectionsPage() {
         if (collectionPieces.length === 0) return null;
 
         return (
-          <section key={collection.slug} className="pt-10">
-            <div className="px-8 flex items-baseline justify-between mb-4">
-              <h2
-                style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 500 }}
-                className="text-xl"
-              >
-                {collection.name}
-              </h2>
-              <Link
-                href={href(`/collections/${collection.slug}`)}
-                className="text-xs uppercase"
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  color: palette.brass,
-                  letterSpacing: "0.1em",
-                  textDecoration: "none",
-                }}
-              >
-                {t.collections.viewFull}
-              </Link>
-            </div>
-
-            <CollectionBanner pieces={collectionPieces} intervalSeconds={5} />
+          <section key={collection.slug} className="px-4 sm:px-8 pt-10">
+            <CollectionPoster collection={collection} pieces={collectionPieces} />
           </section>
         );
       })}
