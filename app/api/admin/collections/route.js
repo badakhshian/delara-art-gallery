@@ -31,7 +31,7 @@ export async function POST(request) {
   }
 }
 
-// Saves edited English/French names for existing collections (matched by
+// Saves edited English/French names and descriptions for existing collections (matched by
 // slug). Slugs, dates and any collection not in the request stay as they are.
 export async function PUT(request) {
   try {
@@ -48,6 +48,8 @@ export async function PUT(request) {
         ...c,
         name: (e.name || "").trim() || c.name,
         nameFr: (e.nameFr || "").trim(),
+        description: (e.description || "").trim(),
+        descriptionFr: (e.descriptionFr || "").trim(),
       };
     });
     await saveCollections(updated);

@@ -3,7 +3,7 @@ import { getCollections } from "@/lib/collectionsStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CollectionPoster from "@/components/CollectionPoster";
+import CollectionShowcase from "@/components/CollectionShowcase";
 import { pageMetadata } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
 import { localizeCollections, localizePieces } from "@/lib/localize";
@@ -51,16 +51,22 @@ export default async function CollectionsPage() {
         </h1>
       </div>
 
-      {orderedCollections.map((collection) => {
-        const collectionPieces = pieces.filter((p) => p.collection === collection.slug);
-        if (collectionPieces.length === 0) return null;
-
-        return (
-          <section key={collection.slug} className="px-4 sm:px-8 pt-10">
-            <CollectionPoster collection={collection} pieces={collectionPieces} />
-          </section>
-        );
-      })}
+      {/* Collections that have pieces, alternating Arch and Curve styles. */}
+      {orderedCollections
+        .map((collection) => ({
+          collection,
+          pieces: pieces.filter((p) => p.collection === collection.slug),
+        }))
+        .filter((c) => c.pieces.length > 0)
+        .map(({ collection, pieces: collectionPieces }, i) => (
+          <CollectionShowcase
+            key={collection.slug}
+            collection={collection}
+            pieces={collectionPieces}
+            number={i + 1}
+            variant={i % 2 === 0 ? "arch" : "curve"}
+          />
+        ))}
 
       <div className="h-16" />
 

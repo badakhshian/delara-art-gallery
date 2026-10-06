@@ -22,14 +22,20 @@ const labelStyle = {
   letterSpacing: "0.08em",
 };
 
-// English and French names of every collection. The French box shows what
+// English and French names and short descriptions of every collection. The French box shows what
 // the French site currently displays (saved French or built-in translation).
 export default function EditCollectionsForm({ collections }) {
   const router = useRouter();
   const [rows, setRows] = useState(() =>
     collections.map((c) => {
       const frName = localizeCollection(c, "fr").name;
-      return { slug: c.slug, name: c.name, nameFr: c.nameFr || (frName !== c.name ? frName : "") };
+      return {
+        slug: c.slug,
+        name: c.name,
+        nameFr: c.nameFr || (frName !== c.name ? frName : ""),
+        description: c.description || "",
+        descriptionFr: c.descriptionFr || "",
+      };
     })
   );
   const [submitting, setSubmitting] = useState(false);
@@ -72,17 +78,32 @@ export default function EditCollectionsForm({ collections }) {
       )}
 
       {rows.map((r) => (
-        <BilingualField
+        <div
           key={r.slug}
-          label={`Collection name · ${r.slug}`}
-          en={r.name}
-          onEn={(v) => update(r.slug, "name", v)}
-          fr={r.nameFr}
-          onFr={(v) => update(r.slug, "nameFr", v)}
-          required
-          inputStyle={inputStyle}
-          labelStyle={labelStyle}
-        />
+          className="flex flex-col gap-4 pb-6"
+          style={{ borderBottom: `1px solid ${adminPalette.border}` }}
+        >
+          <BilingualField
+            label={`Collection name · ${r.slug}`}
+            en={r.name}
+            onEn={(v) => update(r.slug, "name", v)}
+            fr={r.nameFr}
+            onFr={(v) => update(r.slug, "nameFr", v)}
+            required
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
+          <BilingualField
+            label="About this collection (shown on the Collections page)"
+            en={r.description}
+            onEn={(v) => update(r.slug, "description", v)}
+            fr={r.descriptionFr}
+            onFr={(v) => update(r.slug, "descriptionFr", v)}
+            rows={4}
+            inputStyle={inputStyle}
+            labelStyle={labelStyle}
+          />
+        </div>
       ))}
 
       <button
