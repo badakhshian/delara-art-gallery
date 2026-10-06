@@ -118,7 +118,7 @@ function FramedSection({ collection, pieces, number, index, info, circle }) {
 
   return (
     <section
-      className={`flex flex-col-reverse ${circle ? "sm:flex-row-reverse" : "sm:flex-row"} sm:items-center gap-5 sm:gap-10 lg:gap-24 px-6 sm:px-10 lg:px-24 py-10 sm:py-14 lg:py-20`}
+      className={`flex flex-col-reverse ${circle ? "sm:flex-row-reverse" : "sm:flex-row"} sm:items-center gap-5 sm:gap-10 lg:gap-16 2xl:gap-24 px-6 sm:px-10 lg:px-16 2xl:px-24 py-10 sm:py-14 lg:py-20`}
     >
       <div className="flex-1 min-w-0 flex flex-col gap-4 lg:gap-6">
         <div style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", color: palette.brass }} className="text-lg lg:text-[22px]">
@@ -126,8 +126,8 @@ function FramedSection({ collection, pieces, number, index, info, circle }) {
         </div>
         <Link href={collectionHref} style={{ textDecoration: "none", color: palette.bone }}>
           <h2
-            className="m-0 text-[46px] sm:text-[50px] lg:text-[84px]"
-            style={{ fontFamily: "'Fraunces', serif", fontWeight: 300, lineHeight: 0.98, letterSpacing: "-0.015em" }}
+            className="m-0 text-[42px] sm:text-[38px] md:text-[48px] lg:text-[56px] xl:text-[68px] 2xl:text-[80px]"
+            style={{ fontFamily: "'Fraunces', serif", fontWeight: 300, lineHeight: 1, letterSpacing: "-0.015em", overflowWrap: "break-word" }}
           >
             {collection.name}
           </h2>
@@ -146,14 +146,14 @@ function FramedSection({ collection, pieces, number, index, info, circle }) {
       <div
         className={`relative w-full flex-shrink-0 ${
           circle
-            ? "sm:w-[360px] lg:w-[500px] xl:w-[600px] pb-7 lg:pb-9"
-            : "sm:w-[340px] lg:w-[520px] xl:w-[600px] pb-9 lg:pb-14"
+            ? "sm:w-[280px] md:w-[340px] lg:w-[420px] xl:w-[500px] 2xl:w-[600px] pb-7 lg:pb-9"
+            : "sm:w-[280px] md:w-[340px] lg:w-[420px] xl:w-[500px] 2xl:w-[600px] pb-9 lg:pb-14"
         }`}
       >
         <Link href={href(`/piece/${current.id}`)} className="block">
           <div
             className={`relative overflow-hidden ${
-              circle ? "aspect-square" : "h-[420px] sm:h-[460px] lg:h-[640px] xl:h-[720px]"
+              circle ? "aspect-square" : "h-[420px] sm:h-[400px] md:h-[460px] lg:h-[560px] xl:h-[640px] 2xl:h-[720px]"
             }`}
             style={{ borderRadius: circle ? "50%" : "1000px 1000px 0 0", background: palette.wall }}
           >
@@ -206,7 +206,7 @@ function CurveCard({ collection, pieces, number, index, info }) {
       <article className="flex flex-col sm:flex-row sm:h-[540px] lg:h-[640px]" style={{ background: CARD, color: palette.bone }}>
         <Link
           href={href(`/piece/${current.id}`)}
-          className="relative block flex-shrink-0 overflow-hidden h-[380px] sm:h-auto sm:w-[48%] lg:w-[56%]"
+          className="relative block flex-shrink-0 overflow-hidden h-[380px] sm:h-auto sm:w-[48%] lg:w-1/2 xl:w-[56%]"
           style={{ background: palette.void }}
         >
           <Slides pieces={pieces} index={index} sizes="(max-width: 640px) 100vw, 56vw" />
@@ -248,8 +248,8 @@ function CurveCard({ collection, pieces, number, index, info }) {
           </div>
           <Link href={collectionHref} style={{ textDecoration: "none", color: palette.bone }}>
             <h2
-              className="m-0 uppercase text-[40px] lg:text-[64px]"
-              style={{ fontFamily: "'Fraunces', serif", fontWeight: 300, lineHeight: 1.02, letterSpacing: "-0.01em" }}
+              className="m-0 uppercase text-[30px] sm:text-[32px] md:text-[36px] lg:text-[42px] xl:text-[52px]"
+              style={{ fontFamily: "'Fraunces', serif", fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.01em", overflowWrap: "break-word" }}
             >
               {collection.name}
             </h2>
