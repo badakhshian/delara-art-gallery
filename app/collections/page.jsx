@@ -20,6 +20,8 @@ export function generateMetadata() {
 
 export const dynamic = "force-dynamic";
 
+const VARIANTS = ["arch", "curve", "circle"];
+
 export default async function CollectionsPage() {
   const { lang, t } = getI18n();
   const collectionsList = localizeCollections(await getCollections(), lang);
@@ -51,7 +53,7 @@ export default async function CollectionsPage() {
         </h1>
       </div>
 
-      {/* Collections that have pieces, alternating Arch and Curve styles. */}
+      {/* Collections that have pieces, rotating Arch, Curve and Circle styles. */}
       {orderedCollections
         .map((collection) => ({
           collection,
@@ -64,7 +66,7 @@ export default async function CollectionsPage() {
             collection={collection}
             pieces={collectionPieces}
             number={i + 1}
-            variant={i % 2 === 0 ? "arch" : "curve"}
+            variant={VARIANTS[i % VARIANTS.length]}
           />
         ))}
 

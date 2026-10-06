@@ -12,17 +12,20 @@ const SOFT_TEXT = "#BDB6A8";
 const ARCH_THUMBS = 3;
 const LIST_ITEMS = 4;
 
-// One collection on /collections. `variant` alternates down the page:
+// One collection on /collections. `variant` rotates down the page:
 // - "arch": on the page background, the text beside a slideshow framed by an
-//   arch, with a few small pieces overlapping its bottom corner.
+//   arch (picture on the right), with a few small pieces overlapping its
+//   bottom corner.
 // - "curve": a dark card, the slideshow on one side ending in a soft curve,
 //   the text and a list of the pieces on the other.
-// Phones stack both: picture first, then the text.
+// - "circle": like "arch", but the slideshow is a circle on the left.
+// Phones stack all of them: picture first, then the text.
 export default function CollectionShowcase({ collection, pieces, number, variant, intervalSeconds = 5 }) {
   const index = useSlideshow(pieces.length, intervalSeconds);
   if (pieces.length === 0) return null;
   const props = { collection, pieces, number, index, info: collectionInfo(pieces) };
-  return variant === "curve" ? <CurveCard {...props} /> : <ArchSection {...props} />;
+  if (variant === "curve") return <CurveCard {...props} />;
+  return <FramedSection {...props} circle={variant === "circle"} />;
 }
 
 function useSlideshow(count, intervalSeconds) {
@@ -107,14 +110,16 @@ function ViewLink({ href, label }) {
   );
 }
 
-function ArchSection({ collection, pieces, number, index, info }) {
+function FramedSection({ collection, pieces, number, index, info, circle }) {
   const { t, href } = useI18n();
   const current = pieces[index];
   const collectionHref = href(`/collections/${collection.slug}`);
   const meta = [t.pieces(pieces.length), ...info.media, info.years].filter(Boolean).join(" · ");
 
   return (
-    <section className="flex flex-col-reverse sm:flex-row sm:items-center gap-5 sm:gap-10 lg:gap-24 px-6 sm:px-10 lg:px-24 py-10 sm:py-14 lg:py-20">
+    <section
+      className={`flex flex-col-reverse ${circle ? "sm:flex-row-reverse" : "sm:flex-row"} sm:items-center gap-5 sm:gap-10 lg:gap-24 px-6 sm:px-10 lg:px-24 py-10 sm:py-14 lg:py-20`}
+    >
       <div className="flex-1 min-w-0 flex flex-col gap-4 lg:gap-6">
         <div style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", color: palette.brass }} className="text-lg lg:text-[22px]">
           {String(number).padStart(2, "0")}
@@ -138,17 +143,37 @@ function ArchSection({ collection, pieces, number, index, info }) {
         <ViewLink href={collectionHref} label={t.collections.viewFull} />
       </div>
 
-      <div className="relative w-full sm:w-[340px] lg:w-[520px] xl:w-[600px] flex-shrink-0 pb-9 lg:pb-14">
+      <div
+        className={`relative w-full flex-shrink-0 ${
+          circle
+            ? "sm:w-[360px] lg:w-[500px] xl:w-[600px] pb-7 lg:pb-9"
+            : "sm:w-[340px] lg:w-[520px] xl:w-[600px] pb-9 lg:pb-14"
+        }`}
+      >
         <Link href={href(`/piece/${current.id}`)} className="block">
           <div
-            className="relative overflow-hidden h-[420px] sm:h-[460px] lg:h-[640px] xl:h-[720px]"
-            style={{ borderRadius: "1000px 1000px 0 0", background: palette.wall }}
+            className={`relative overflow-hidden ${
+              circle ? "aspect-square" : "h-[420px] sm:h-[460px] lg:h-[640px] xl:h-[720px]"
+            }`}
+            style={{ borderRadius: circle ? "50%" : "1000px 1000px 0 0", background: palette.wall }}
           >
             <Slides pieces={pieces} index={index} sizes="(max-width: 640px) 100vw, 600px" />
-            <ProgressBars count={pieces.length} index={index} className="right-5 bottom-5 lg:right-7 lg:bottom-7" />
+            <ProgressBars
+              count={pieces.length}
+              index={index}
+              className={
+                circle
+                  ? "left-1/2 -translate-x-1/2 bottom-6 lg:bottom-9"
+                  : "right-5 bottom-5 lg:right-7 lg:bottom-7"
+              }
+            />
           </div>
         </Link>
-        <div className="absolute left-3 sm:-left-7 lg:-left-12 bottom-0 flex gap-2 lg:gap-3">
+        <div
+          className={`absolute bottom-0 flex gap-2 lg:gap-3 ${
+            circle ? "right-0 sm:-right-6 lg:-right-10" : "left-3 sm:-left-7 lg:-left-12"
+          }`}
+        >
           {pieces.slice(0, ARCH_THUMBS).map((piece) => {
             const image = featuredImage(piece);
             return (
