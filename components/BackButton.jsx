@@ -4,11 +4,16 @@ import { useRouter } from "next/navigation";
 import { palette } from "@/lib/palette";
 import { useI18n } from "@/components/LangProvider";
 
-export default function BackButton() {
+// `to` (e.g. "/") always goes to that page instead of the previous one.
+export default function BackButton({ to } = {}) {
   const { t, href } = useI18n();
   const router = useRouter();
 
   function handleBack() {
+    if (to) {
+      router.push(href(to));
+      return;
+    }
     // If there's real browser history to go back to, use it — this
     // returns to whatever page actually linked here (a collection, the
     // homepage, etc). Only falls back to the homepage if this page was
@@ -24,6 +29,7 @@ export default function BackButton() {
   // bottom) and lines up with the logo's left edge (px-8).
   return (
     <button
+      type="button"
       onClick={handleBack}
       className="absolute left-8"
       style={{
