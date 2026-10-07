@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPieces } from "@/lib/piecesStore";
+import { getCollections } from "@/lib/collectionsStore";
 import { palette } from "@/lib/palette";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,9 +9,10 @@ import HeroCarousel from "@/components/HeroCarousel";
 import Reveal from "@/components/Reveal";
 import WallAccordion from "@/components/WallAccordion";
 import TimelinePanel from "@/components/TimelinePanel";
+import CollectionsBand from "@/components/CollectionsBand";
 import { absoluteUrl, pageMetadata, pieceImages } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
-import { localizePieces } from "@/lib/localize";
+import { localizeCollections, localizePieces } from "@/lib/localize";
 import { heroSlides } from "@/lib/hero";
 
 
@@ -37,12 +39,23 @@ export default async function HomePage() {
   const { lang, t, href } = getI18n();
   const pieces = localizePieces(await getPieces(), lang);
   const wallPieces = pieces.filter((p) => p.onWall !== false);
+  // Collections that have pieces, newest first.
+  const bandCollections = localizeCollections(await getCollections(), lang)
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .map((c) => ({ slug: c.slug, name: c.name, pieces: pieces.filter((p) => p.collection === c.slug) }))
+    .filter((c) => c.pieces.length > 0);
 
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
 
       <HeroCarousel slides={heroSlides(pieces)} intervalSeconds={6} />
+
+      {bandCollections.length > 0 && (
+        <Reveal>
+          <CollectionsBand collections={bandCollections} />
+        </Reveal>
+      )}
 
 
       <section className="px-8 pb-4 pt-16" id="collection">
@@ -126,43 +139,6 @@ export default async function HomePage() {
         </Reveal>
         <Reveal>
           <TimelinePanel pieces={pieces} />
-        </Reveal>
-      </section>
-
-      <section
-        className="px-8 py-16 flex flex-col items-center text-center"
-        style={{ background: palette.wall, borderTop: `1px solid rgba(184,141,87,0.15)` }}
-      >
-        <Reveal>
-          <h2
-            style={{ fontFamily: "'Fraunces', serif", color: palette.bone, fontWeight: 300 }}
-            className="text-2xl mb-4"
-          >
-            {t.home.exploreTitle}
-          </h2>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <p
-            className="text-sm max-w-md mb-8"
-            style={{ fontFamily: "'Inter', sans-serif", color: palette.smoke }}
-          >
-            {t.home.exploreText}
-          </p>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <Link
-            href={href("/collections")}
-            className="text-xs uppercase px-6 py-3"
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              color: palette.void,
-              background: palette.brass,
-              letterSpacing: "0.1em",
-              textDecoration: "none",
-            }}
-          >
-            {t.home.viewCollections}
-          </Link>
         </Reveal>
       </section>
 
