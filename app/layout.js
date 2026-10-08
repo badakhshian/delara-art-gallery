@@ -1,3 +1,4 @@
+import "./fonts.css";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import PageTransition from "@/components/PageTransition";

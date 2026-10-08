@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isValidAdminSession } from "@/lib/adminSession";
 
 // Strips a leading /fr from a path: "/fr/timeline" -> "/timeline", "/fr" -> "/".
 function stripFr(pathname) {
@@ -7,13 +8,13 @@ function stripFr(pathname) {
   return null;
 }
 
-function requireAdmin(request, pathname) {
+async function requireAdmin(request, pathname) {
   const isAdminPage = pathname.startsWith("/admin") && pathname !== "/admin/login";
   const isAdminApi = pathname.startsWith("/api/admin") && pathname !== "/api/admin/login";
   if (!isAdminPage && !isAdminApi) return null;
 
   const session = request.cookies.get("admin_session")?.value;
-  const authorized = !!session && session === process.env.ADMIN_PASSWORD;
+  const authorized = !!session && (await isValidAdminSession(session));
   if (authorized) return null;
 
   if (isAdminApi) {
@@ -27,10 +28,10 @@ function requireAdmin(request, pathname) {
 //   /<path>, with an x-lang: fr request header the pages read to pick the
 //   language. Everything else gets x-lang: en (overwriting anything a
 //   client might send).
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  const blocked = requireAdmin(request, pathname);
+  const blocked = await requireAdmin(request, pathname);
   if (blocked) return blocked;
 
   const frPath = stripFr(pathname);

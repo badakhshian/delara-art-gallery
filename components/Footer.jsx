@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { palette } from "@/lib/palette";
 import SocialLinks from "./SocialLinks";
 import { useI18n } from "@/components/LangProvider";
 
 export default function Footer() {
-  const { t } = useI18n();
+  const { t, href } = useI18n();
   return (
     <footer
       className="px-8 py-12"
@@ -64,14 +65,17 @@ export default function Footer() {
       </div>
 
       <div
-        className="mt-10 pt-6 text-xs"
+        className="mt-10 pt-6 text-xs flex flex-col sm:flex-row sm:justify-between gap-3"
         style={{
           fontFamily: "'IBM Plex Mono', monospace",
           color: palette.smoke,
           borderTop: `1px solid rgba(184,141,87,0.1)`,
         }}
       >
-        {t.footer.rights(new Date().getFullYear())}
+        <span>{t.footer.rights(new Date().getFullYear())}</span>
+        <Link href={href("/privacy")} style={{ color: palette.smoke, textDecoration: "underline", textUnderlineOffset: 3 }}>
+          {t.footer.privacy}
+        </Link>
       </div>
     </footer>
   );

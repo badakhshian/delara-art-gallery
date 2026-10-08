@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { adminSessionToken } from "@/lib/adminSession";
 
 export async function POST(request) {
   const { password } = await request.json();
@@ -15,7 +16,7 @@ export async function POST(request) {
   }
 
   const response = NextResponse.json({ ok: true });
-  response.cookies.set("admin_session", process.env.ADMIN_PASSWORD, {
+  response.cookies.set("admin_session", await adminSessionToken(), {
     httpOnly: true,
     secure: true,
     sameSite: "lax",

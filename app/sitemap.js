@@ -16,6 +16,7 @@ export default async function sitemap() {
     { path: "/timeline", priority: 0.7, changeFrequency: "weekly" },
     { path: "/artist", priority: 0.7, changeFrequency: "monthly" },
     { path: "/visit", priority: 0.5, changeFrequency: "yearly" },
+    { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
   ].map(({ path, ...rest }) => ({ url: absoluteUrl(path), ...rest }));
 
   const collectionPages = collections.map((c) => ({
