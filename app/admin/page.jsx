@@ -6,6 +6,7 @@ import { adminPalette } from "@/lib/palette";
 import AdminTabs from "@/components/admin/AdminTabs";
 import DeletePieceButton from "@/components/admin/DeletePieceButton";
 import LogoutButton from "@/components/admin/LogoutButton";
+import EmailBackupButton from "@/components/admin/EmailBackupButton";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,7 @@ export default async function AdminPage() {
           >
             Download backup
           </a>
+          <EmailBackupButton />
           <LogoutButton />
         </div>
       </div>
