@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { adminSessionToken } from "@/lib/adminSession";
+import { adminSessionToken, isValidAdminSession } from "@/lib/adminSession";
+
+// Each wrong password waits this long before answering, so guessing
+// passwords one after another becomes very slow.
+const FAILED_LOGIN_DELAY_MS = 2000;
 
 export async function POST(request) {
   const { password } = await request.json();
@@ -11,7 +15,12 @@ export async function POST(request) {
     );
   }
 
-  if (password !== process.env.ADMIN_PASSWORD) {
+  const ok =
+    typeof password === "string" &&
+    password.length <= 200 &&
+    (await isValidAdminSession(await adminSessionToken(password)));
+  if (!ok) {
+    await new Promise((resolve) => setTimeout(resolve, FAILED_LOGIN_DELAY_MS));
     return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
   }
 

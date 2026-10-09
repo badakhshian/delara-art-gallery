@@ -31,6 +31,8 @@ export default function VisitPage() {
   const [pieceId, setPieceId] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
   const [message, setMessage] = useState("");
+  // Hidden "website" field: people never see or fill it, spam bots do.
+  const [website, setWebsite] = useState("");
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [pieces, setPieces] = useState([]);
@@ -51,7 +53,7 @@ export default function VisitPage() {
       const res = await fetch("/api/visit-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, pieceId, preferredTime, message }),
+        body: JSON.stringify({ name, email, phone, pieceId, preferredTime, message, website }),
       });
       const data = await res.json();
 
@@ -130,6 +132,19 @@ export default function VisitPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-6">
+          <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+            <label>
+              Website
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
+            </label>
+          </div>
           <div>
             <label className="text-xs uppercase block mb-2" style={labelStyle}>
               {v.name}
