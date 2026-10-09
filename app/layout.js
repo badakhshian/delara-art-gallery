@@ -15,6 +15,8 @@ const DESCRIPTION =
 // share image here is only a fallback for pages without their own.
 export const metadata = {
   metadataBase: new URL(SITE_URL),
+  // Google Search Console ownership check.
+  verification: { google: "CvALtjU3dH5MWQhMJqgLxnzYu2pVjcjnGQod_j14JZk" },
   title: SITE_NAME,
   description: DESCRIPTION,
   openGraph: {
