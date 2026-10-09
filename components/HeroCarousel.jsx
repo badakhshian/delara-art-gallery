@@ -48,7 +48,7 @@ export default function HeroCarousel({ slides, intervalSeconds = 6 }) {
                 {image && (
                   <Image
                     src={image}
-                    alt={t.meta.imageAlt(piece.title)}
+                    alt={t.meta.imageAlt(piece.title, piece.medium)}
                     fill
                     priority={i === 0}
                     sizes="100vw"

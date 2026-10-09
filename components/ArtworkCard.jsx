@@ -42,7 +42,7 @@ export default function ArtworkCard({ piece, tall }) {
         {image && (
           <Image
             src={image}
-            alt={t.meta.imageAlt(piece.title)}
+            alt={t.meta.imageAlt(piece.title, piece.medium)}
             fill
             sizes="(max-width: 640px) 50vw, 300px"
             style={{ objectFit: "cover" }}

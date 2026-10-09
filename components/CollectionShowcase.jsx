@@ -60,7 +60,7 @@ function Slides({ pieces, index, sizes }) {
         style={{ opacity: i === index ? 1 : 0, transition: "opacity 1.2s ease" }}
       >
         {image && (
-          <Image src={image} alt={t.meta.imageAlt(piece.title)} fill sizes={sizes} style={{ objectFit: "cover" }} />
+          <Image src={image} alt={t.meta.imageAlt(piece.title, piece.medium)} fill sizes={sizes} style={{ objectFit: "cover" }} />
         )}
       </div>
     );

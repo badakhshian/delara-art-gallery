@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 import BackButton from "@/components/BackButton";
-import { pageMetadata, pieceImages } from "@/lib/seo";
+import { JsonLd, collectionJsonLd, pageMetadata, pieceImages, truncate } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
 import { localizeCollection, localizePieces } from "@/lib/localize";
 
@@ -16,8 +16,10 @@ export async function generateMetadata({ params }) {
   if (!collection) return {};
   const pieces = localizePieces(await getPieces(), lang).filter((p) => p.collection === collection.slug);
   return pageMetadata({
-    title: `${collection.name} — Delara Art Gallery`,
-    description: t.meta.collectionDescription(collection.name, pieces.length),
+    title: `${collection.name} — ${lang === "fr" ? "Œuvres originales de" : "Original Art by"} Delara Ahmadi Darani`,
+    description: collection.description
+      ? truncate(collection.description)
+      : t.meta.collectionDescription(collection.name, pieces.length),
     path: `/collections/${collection.slug}`,
     lang,
     images: pieces[0] ? pieceImages(pieces[0], lang).slice(0, 1) : undefined,
@@ -37,6 +39,7 @@ export default async function CollectionPage({ params }) {
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
+      <JsonLd data={collectionJsonLd(collection, collectionPieces, lang)} />
 
       <div className="relative px-8 pt-40 pb-16">
         <BackButton to="/collections" />

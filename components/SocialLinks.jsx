@@ -1,6 +1,6 @@
 import { palette } from "@/lib/palette";
 
-const INSTAGRAM_URL = "https://www.instagram.com/delara_art_gallery/";
+import { INSTAGRAM_URL } from "@/lib/site";
 const WHATSAPP_URL = "https://wa.me/15149520150";
 
 function InstagramIcon() {

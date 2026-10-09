@@ -19,7 +19,10 @@ export async function generateMetadata({ params }) {
   const piece = localizePiece(await getPiece(params.id), lang);
   if (!piece) return {};
   return pageMetadata({
-    title: `${piece.title} — ${ARTIST_NAME}`,
+    // e.g. "Echoes of Emerald — Acrylic and chalk pastel by Delara Ahmadi Darani"
+    title: piece.medium
+      ? `${piece.title} — ${piece.medium.trim()} ${lang === "fr" ? "de" : "by"} ${ARTIST_NAME}`
+      : `${piece.title} — ${ARTIST_NAME}`,
     description: pieceDescription(piece, lang),
     path: `/piece/${piece.id}`,
     lang,
@@ -107,7 +110,7 @@ export default async function PieceDetailPage({ params, searchParams }) {
         {hero ? (
           <img
             src={hero}
-            alt={t.meta.imageAlt(piece.title)}
+            alt={t.meta.imageAlt(piece.title, piece.medium)}
             style={{ width: "100%", height: "auto", display: "block" }}
           />
         ) : (

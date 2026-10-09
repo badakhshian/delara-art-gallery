@@ -10,7 +10,7 @@ import Reveal from "@/components/Reveal";
 import WallAccordion from "@/components/WallAccordion";
 import TimelinePanel from "@/components/TimelinePanel";
 import CollectionsBand from "@/components/CollectionsBand";
-import { absoluteUrl, pageMetadata, pieceImages } from "@/lib/seo";
+import { JsonLd, absoluteUrl, galleryJsonLd, pageMetadata, pieceImages } from "@/lib/seo";
 import { getI18n } from "@/lib/serverLang";
 import { localizeCollections, localizePieces } from "@/lib/localize";
 import { heroSlides } from "@/lib/hero";
@@ -48,6 +48,7 @@ export default async function HomePage() {
   return (
     <div style={{ background: palette.void, minHeight: "100vh" }}>
       <Header />
+      <JsonLd data={galleryJsonLd(lang)} />
 
       <HeroCarousel slides={heroSlides(pieces)} intervalSeconds={6} />
 

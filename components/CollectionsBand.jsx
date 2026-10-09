@@ -70,7 +70,7 @@ export default function CollectionsBand({ collections, intervalSeconds = 5 }) {
             >
               <Image
                 src={featuredImage(piece)}
-                alt={t.meta.imageAlt(piece.title)}
+                alt={t.meta.imageAlt(piece.title, piece.medium)}
                 fill
                 sizes="(max-width: 640px) 100vw, 480px"
                 style={{ objectFit: "cover" }}
