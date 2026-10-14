@@ -6,6 +6,8 @@ import { updatePiece, getPiece } from "@/lib/piecesStore";
 import { localizePiece } from "@/lib/localize";
 import { buildBuyerEmail } from "@/lib/purchaseEmail";
 import { senderAddress } from "@/lib/emailSender";
+import { createOrder, orderUrl } from "@/lib/ordersStore";
+import { SITE_URL } from "@/lib/site";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-06-20",
@@ -108,9 +110,45 @@ export async function POST(request) {
 
     const buyerEmail = session.customer_details?.email;
     const buyerName = session.customer_details?.name || "";
-    const shipping = session.collected_information?.shipping_details;
+    // Newer Stripe API versions put the address under collected_information.
+    const shipping = session.collected_information?.shipping_details || session.shipping_details;
     const amount = formatDollars(session.amount_total);
     const pieceTitle = piece?.title || pieceId || "your piece";
+
+    // The order behind the buyer's private tracking page and the admin's
+    // Orders tab. A failure here must not stop the emails below.
+    let order = null;
+    try {
+      order = await createOrder({
+        source: "stripe",
+        stripeSessionId: session.id,
+        stripePaymentIntent: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || "",
+        pieceId: pieceId || "",
+        pieceTitle: piece?.title || pieceId || "",
+        pieceImage: piece?.images?.[0] || "",
+        amountCents: session.amount_total,
+        lang,
+        buyer: {
+          name: buyerName,
+          email: buyerEmail || "",
+          phone: session.customer_details?.phone || "",
+        },
+        shipping: shipping?.address
+          ? {
+              name: shipping.name || buyerName,
+              line1: shipping.address.line1 || "",
+              line2: shipping.address.line2 || "",
+              city: shipping.address.city || "",
+              state: shipping.address.state || "",
+              postal_code: shipping.address.postal_code || "",
+              country: shipping.address.country || "",
+            }
+          : null,
+      });
+    } catch (err) {
+      console.error("Could not save the order:", err);
+    }
+    const orderLink = order ? orderUrl(order, SITE_URL, lang) : null;
 
     let invoicePdfUrl = null;
     let invoiceHostedUrl = null;
@@ -138,6 +176,8 @@ export async function POST(request) {
             amountCents: session.amount_total,
             invoiceHostedUrl,
             invoicePdfUrl,
+            orderId: order?.id,
+            orderLink,
           });
           await resend.emails.send({
             from: fromAddress,
@@ -157,10 +197,13 @@ export async function POST(request) {
           from: fromAddress,
           to: "Ahmadi.delara@gmail.com",
           replyTo: buyerEmail || undefined,
-          subject: `New sale: ${pieceTitle} (${amount})`,
+          subject: `New sale: ${pieceTitle} (${amount})${order ? ` — ${order.id}` : ""}`,
           text: [
             `"${pieceTitle}" just sold for ${amount}.`,
             "",
+            order ? `Order ${order.id} — update its status in the admin: ${SITE_URL}/admin/orders/${order.id}` : null,
+            orderLink ? `Buyer's private tracking page: ${orderLink}` : null,
+            order ? "" : null,
             `Buyer: ${buyerName || "(no name given)"}`,
             `Buyer's language: ${lang === "fr" ? "French — they bought from the French site" : "English"}`,
             buyerEmail ? `Email: ${buyerEmail}` : null,

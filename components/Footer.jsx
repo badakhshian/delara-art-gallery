@@ -73,9 +73,14 @@ export default function Footer() {
         }}
       >
         <span>{t.footer.rights(new Date().getFullYear())}</span>
-        <Link href={href("/privacy")} style={{ color: palette.smoke, textDecoration: "underline", textUnderlineOffset: 3 }}>
-          {t.footer.privacy}
-        </Link>
+        <div className="flex flex-wrap gap-x-6 gap-y-3">
+          <Link href={href("/track")} style={{ color: palette.smoke, textDecoration: "underline", textUnderlineOffset: 3 }}>
+            {t.footer.trackOrder}
+          </Link>
+          <Link href={href("/privacy")} style={{ color: palette.smoke, textDecoration: "underline", textUnderlineOffset: 3 }}>
+            {t.footer.privacy}
+          </Link>
+        </div>
       </div>
     </footer>
   );
