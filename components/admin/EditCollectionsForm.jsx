@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { adminPalette } from "@/lib/palette";
 import { localizeCollection } from "@/lib/localize";
 import BilingualField from "@/components/admin/BilingualField";
+import DeleteCollectionButton from "@/components/admin/DeleteCollectionButton";
 
 const inputStyle = {
   fontFamily: "'Inter', sans-serif",
@@ -24,7 +25,7 @@ const labelStyle = {
 
 // English and French names and short descriptions of every collection. The French box shows what
 // the French site currently displays (saved French or built-in translation).
-export default function EditCollectionsForm({ collections }) {
+export default function EditCollectionsForm({ collections, pieceCounts = {} }) {
   const router = useRouter();
   const [rows, setRows] = useState(() =>
     collections.map((c) => {
@@ -73,7 +74,7 @@ export default function EditCollectionsForm({ collections }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-4xl">
       {rows.length === 0 && (
         <p className="text-sm" style={{ fontFamily: "'Inter', sans-serif", color: adminPalette.muted }}>
-          No collections yet — create one from a piece's form.
+          No collections yet — add one above.
         </p>
       )}
 
@@ -83,8 +84,14 @@ export default function EditCollectionsForm({ collections }) {
           className="flex flex-col gap-4 pb-6"
           style={{ borderBottom: `1px solid ${adminPalette.border}` }}
         >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="text-xs" style={labelStyle}>
+              {r.slug} · {pieceCounts[r.slug] || 0} {(pieceCounts[r.slug] || 0) === 1 ? "piece" : "pieces"}
+            </div>
+            <DeleteCollectionButton slug={r.slug} name={r.name} pieceCount={pieceCounts[r.slug] || 0} />
+          </div>
           <BilingualField
-            label={`Collection name · ${r.slug}`}
+            label="Collection name"
             en={r.name}
             onEn={(v) => update(r.slug, "name", v)}
             fr={r.nameFr}
