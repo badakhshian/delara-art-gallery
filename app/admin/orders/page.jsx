@@ -28,7 +28,7 @@ export default async function AdminOrdersPage({ searchParams }) {
   const shown = filter.statuses ? orders.filter((o) => filter.statuses.includes(o.status)) : orders;
 
   return (
-    <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-4 sm:px-10 py-10">
+    <div style={{ background: adminPalette.bg, minHeight: "100vh" }} className="px-6 sm:px-10 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
         <div>
           <div className="text-xs uppercase mb-1" style={{ ...mono, color: adminPalette.brass, letterSpacing: "0.12em" }}>
@@ -52,7 +52,7 @@ export default async function AdminOrdersPage({ searchParams }) {
         </Link>
       </div>
 
-      <div className="mt-6 -mx-4 px-4 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto pb-1 text-[10px] sm:text-[11px] uppercase" style={{ ...mono, letterSpacing: "0.08em" }}>
+      <div className="mt-6 -mx-6 px-6 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto pb-1 text-[10px] sm:text-[11px] uppercase" style={{ ...mono, letterSpacing: "0.08em" }}>
         {ORDER_FILTERS.map((f) => {
           const active = f.key === filter.key;
           return (

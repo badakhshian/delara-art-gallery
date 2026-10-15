@@ -29,37 +29,40 @@ export default async function AdminPage() {
           </div>
           <AdminTabs active="pieces" />
         </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/admin/new"
-            className="text-xs uppercase px-4 py-2"
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              color: adminPalette.surface,
-              background: adminPalette.brass,
-              letterSpacing: "0.1em",
-              textDecoration: "none",
-            }}
-          >
-            + Add piece
-          </Link>
-          <a
-            href="/api/admin/backup"
-            className="text-xs uppercase px-4 py-2"
-            title="Download a copy of all pieces, collections and artist text"
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              color: adminPalette.text,
-              border: `1px solid ${adminPalette.border}`,
-              letterSpacing: "0.1em",
-              textDecoration: "none",
-            }}
-          >
-            Download backup
-          </a>
-          <EmailBackupButton />
-          <LogoutButton />
-        </div>
+        <LogoutButton />
+      </div>
+
+      {/* Same header as the other tabs (Log out on the right); this tab's own
+          buttons sit on their own row below. */}
+      <div className="flex flex-wrap items-center gap-3 mb-8">
+        <Link
+          href="/admin/new"
+          className="text-xs uppercase px-4 py-2"
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            color: adminPalette.surface,
+            background: adminPalette.brass,
+            letterSpacing: "0.1em",
+            textDecoration: "none",
+          }}
+        >
+          + Add piece
+        </Link>
+        <a
+          href="/api/admin/backup"
+          className="text-xs uppercase px-4 py-2"
+          title="Download a copy of all pieces, collections and artist text"
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            color: adminPalette.text,
+            border: `1px solid ${adminPalette.border}`,
+            letterSpacing: "0.1em",
+            textDecoration: "none",
+          }}
+        >
+          Download backup
+        </a>
+        <EmailBackupButton />
       </div>
 
       <div className="flex flex-col gap-4">
@@ -96,7 +99,7 @@ export default async function AdminPage() {
                 {p.title}
               </div>
               <div
-                className="text-xs"
+                className="text-xs truncate"
                 style={{ fontFamily: "'IBM Plex Mono', monospace", color: adminPalette.muted }}
               >
                 {p.collection || "no collection"} · {formatPrice(p.priceCents)}
