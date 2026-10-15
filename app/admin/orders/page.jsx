@@ -5,7 +5,7 @@ import { formatPrice } from "@/lib/pieces";
 import { adminPalette } from "@/lib/palette";
 import { ORDER_FILTERS, formatAdminDate } from "@/lib/orderAdmin";
 import AdminTabs from "@/components/admin/AdminTabs";
-import LogoutButton from "@/components/admin/LogoutButton";
+import AdminHeaderActions from "@/components/admin/AdminHeaderActions";
 import OrderStatusPill from "@/components/admin/OrderStatusPill";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ export default async function AdminOrdersPage({ searchParams }) {
           </div>
           <AdminTabs active="orders" />
         </div>
-        <LogoutButton />
+        <AdminHeaderActions />
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">

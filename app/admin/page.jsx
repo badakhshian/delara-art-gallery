@@ -5,8 +5,7 @@ import { formatPrice } from "@/lib/pieces";
 import { adminPalette } from "@/lib/palette";
 import AdminTabs from "@/components/admin/AdminTabs";
 import DeletePieceButton from "@/components/admin/DeletePieceButton";
-import LogoutButton from "@/components/admin/LogoutButton";
-import EmailBackupButton from "@/components/admin/EmailBackupButton";
+import AdminHeaderActions from "@/components/admin/AdminHeaderActions";
 
 export const dynamic = "force-dynamic";
 
@@ -29,11 +28,10 @@ export default async function AdminPage() {
           </div>
           <AdminTabs active="pieces" />
         </div>
-        <LogoutButton />
+        <AdminHeaderActions />
       </div>
 
-      {/* Same header as the other tabs (Log out on the right); this tab's own
-          buttons sit on their own row below. */}
+      {/* Same header as the other tabs; this tab's own button sits below. */}
       <div className="flex flex-wrap items-center gap-3 mb-8">
         <Link
           href="/admin/new"
@@ -48,21 +46,6 @@ export default async function AdminPage() {
         >
           + Add piece
         </Link>
-        <a
-          href="/api/admin/backup"
-          className="text-xs uppercase px-4 py-2"
-          title="Download a copy of all pieces, collections and artist text"
-          style={{
-            fontFamily: "'IBM Plex Mono', monospace",
-            color: adminPalette.text,
-            border: `1px solid ${adminPalette.border}`,
-            letterSpacing: "0.1em",
-            textDecoration: "none",
-          }}
-        >
-          Download backup
-        </a>
-        <EmailBackupButton />
       </div>
 
       <div className="flex flex-col gap-4">

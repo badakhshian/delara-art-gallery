@@ -4,7 +4,7 @@ import { adminPalette } from "@/lib/palette";
 import AdminTabs from "@/components/admin/AdminTabs";
 import EditCollectionsForm from "@/components/admin/EditCollectionsForm";
 import AddCollectionForm from "@/components/admin/AddCollectionForm";
-import LogoutButton from "@/components/admin/LogoutButton";
+import AdminHeaderActions from "@/components/admin/AdminHeaderActions";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export default async function AdminCollectionsPage() {
           </div>
           <AdminTabs active="collections" />
         </div>
-        <LogoutButton />
+        <AdminHeaderActions />
       </div>
 
       <AddCollectionForm />

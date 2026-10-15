@@ -2,7 +2,7 @@ import { getArtist } from "@/lib/artistStore";
 import { adminPalette } from "@/lib/palette";
 import AdminTabs from "@/components/admin/AdminTabs";
 import EditArtistForm from "@/components/admin/EditArtistForm";
-import LogoutButton from "@/components/admin/LogoutButton";
+import AdminHeaderActions from "@/components/admin/AdminHeaderActions";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +25,7 @@ export default async function AdminArtistPage() {
           </div>
           <AdminTabs active="artist" />
         </div>
-        <LogoutButton />
+        <AdminHeaderActions />
       </div>
 
       <EditArtistForm artist={artist} />
